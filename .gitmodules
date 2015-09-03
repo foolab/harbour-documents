@@ -1,0 +1,3 @@
+[submodule "external/poppler"]
+	path = poppler
+	url = git://git.freedesktop.org/git/poppler/poppler
