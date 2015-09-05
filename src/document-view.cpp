@@ -115,7 +115,14 @@ void DocumentView::refreshTiles() {
 	qDebug() << "checking rect " << r;
 	if (rect.intersects(r)) {
 	  // In case our width or height are greater than those of the page
-	  r = pageRect.intersected(r);
+	  if (r.right() > pageRect.right()) {
+	    r.setRight(pageRect.right());
+	  }
+
+	  if (r.bottom() > pageRect.bottom()) {
+	    r.setBottom(pageRect.bottom());
+	  }
+
 	  Tile t;
 	  t.y = pageRect.top();
 	  t.rect = r;
