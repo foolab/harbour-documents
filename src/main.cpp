@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QQmlError>
 
+#include "poppler-document.h"
+#include "document-view.h"
+
 int main(int argc, char *argv[]) {
   QScopedPointer<QGuiApplication> app(new QGuiApplication(argc, argv));
   QScopedPointer<QQuickView> view(new QQuickView);
@@ -11,6 +14,9 @@ int main(int argc, char *argv[]) {
   app->setApplicationName("harbour-pdf");
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
+
+  qmlRegisterType<PopplerDocument>("Poppler", 1, 0, "PopplerDocument");
+  qmlRegisterType<DocumentView>("Poppler", 1, 0, "DocumentView");
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
 
@@ -25,7 +31,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  view->showFullScreen();
+  //  view->showFullScreen();
+  view->show();
 
   return app->exec();
 }
