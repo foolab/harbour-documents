@@ -57,6 +57,15 @@ width: 400; height: 600
             flick.contentY = y
         }
 
+        Keys.onSpacePressed: {
+            var y = flick.contentY + flick.height
+            if (y > flick.contentHeight) {
+                x = flick.contentHeight
+            }
+
+            flick.contentY = y
+        }
+
     }
 
     DocumentView {
