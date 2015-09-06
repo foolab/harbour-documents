@@ -15,7 +15,6 @@ PopplerDocument::PopplerDocument(QQuickItem *parent) :
   m_dpiY = QGuiApplication::primaryScreen()->logicalDotsPerInchY();
 
   qDebug() << "DPI: x=" << m_dpiX << " y=" << m_dpiY;
-
 }
 
 PopplerDocument::~PopplerDocument() {
