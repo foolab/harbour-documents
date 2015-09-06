@@ -3,8 +3,8 @@
 #include <QDebug>
 #include "poppler-document.h"
 
-#define UPDATE_DELAY 1 //100
-#define TILE_SIZE    256
+#define UPDATE_DELAY 10
+#define TILE_SIZE    512
 #define EXTRA_TILES  1
 
 DocumentView::DocumentView(QQuickItem *parent) :
