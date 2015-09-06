@@ -3,9 +3,9 @@
 
 #include <QQuickPaintedItem>
 #include <QTimer>
+#include "tile-cache.h"
 
 class PopplerDocument;
-class Tile;
 
 class DocumentView : public QQuickPaintedItem {
   Q_OBJECT
@@ -35,9 +35,11 @@ signals:
 
 private slots:
   void refreshTiles();
+  void tileAvailable(Tile tile);
 
 private:
   PopplerDocument *m_doc;
+  TileCache *m_cache;
   qreal m_x;
   qreal m_y;
   QTimer m_timer;
