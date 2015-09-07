@@ -101,7 +101,7 @@ void DocumentView::paint(QPainter *painter) {
   foreach (const Tile& tile, m_tiles) {
     QPointF pt = tile.rect.topLeft() - QPointF(m_x, m_y);
 
-    //    qDebug() << "Rendering tile at" << pt;
+    //    qDebug() << "Rendering tile at" << pt << tile.image.size();
 
     painter->drawImage(QRectF(pt, tile.image.size()), tile.image);
 

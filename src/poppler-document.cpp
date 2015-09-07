@@ -33,7 +33,7 @@ void PopplerDocument::setFilePath(const QString& filePath) {
     emit filePathChanged();
 
     emit aboutToReset();
-    init(true);
+    init();
     emit reset();
   }
 }
@@ -47,7 +47,7 @@ void PopplerDocument::setZoom(qreal zoom) {
     m_zoom = zoom;
 
     emit aboutToReset();
-    init(false);
+    init();
     emit reset();
   }
 }
@@ -60,16 +60,13 @@ void PopplerDocument::clear() {
   m_pages.clear();
 }
 
-void PopplerDocument::init(bool clear) {
+void PopplerDocument::init() {
   // TODO: No need to worry about painting for now
-  if (clear) {
-    PopplerDocument::clear();
-    m_doc = Poppler::Document::load(m_filePath);
-  }
+  clear();
 
-  if (clear && !m_doc) {
-    // TODO: error
-  } else if (!m_doc) {
+  m_doc = Poppler::Document::load(m_filePath);
+
+  if (!m_doc) {
     return;
   }
 
@@ -117,7 +114,6 @@ QList<DocumentPage *> PopplerDocument::findPages(qreal top, qreal bottom) {
     DocumentPage *page = m_pages[i];
     qreal y = page->y();
 
-    // TODO: zoom
     QSizeF size(page->size(dpiX(), dpiY()));
 
     QRectF pageRect(QPointF(0, y), size);

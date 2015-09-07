@@ -28,14 +28,12 @@ QList<QRectF> DocumentPage::segments(int tileSize, qreal dpiX, qreal dpiY) {
   QSizeF s(size(dpiX, dpiY));
   QList<QRectF> rects;
 
-  for (int y = 0; y < s.height(); y += tileSize) {
+  for (int y = m_y; y < s.height() + m_y; y += tileSize) {
     for (int x = 0; x < s.width(); x += tileSize) {
       QRectF rect(x, y, tileSize, tileSize);
-      rect.setRight(qMin(rect.right(), s.width()));
-      rect.setBottom(qMin(rect.bottom(), s.height()));
-
       qDebug() << "Rect before" << rect;
-      rect.setY(m_y);
+      rect.setRight(qMin(rect.right(), s.width()));
+      rect.setBottom(qMin(rect.bottom(), m_y + s.height()));
       qDebug() << "Rect after" << rect;
 
       rects << rect;
