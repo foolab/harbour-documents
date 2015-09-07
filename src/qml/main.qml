@@ -3,6 +3,10 @@ import Poppler 1.0
 
 Rectangle {
 width: 400; height: 600
+Rectangle {
+color: "green"
+anchors.fill: parent
+}
 
     Flickable {
         id: flick
@@ -17,6 +21,7 @@ width: 400; height: 600
         PopplerDocument {
             id: doc
             filePath: "/home/mohammed/slides.pdf"
+            zoom: 1.0
 //            filePath: "/home/mohammed/Wada3.pdf"
         }
 
@@ -66,6 +71,16 @@ width: 400; height: 600
             flick.contentY = y
         }
 
+        Keys.onEscapePressed: doc.zoom = 1.0
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Plus) {
+                doc.zoom += 0.1
+                console.log("zoom in")
+            } else if (event.key == Qt.Key_Minus) {
+                doc.zoom -= 0.1
+                console.log("zoom out")
+            }
+        }
     }
 
     DocumentView {

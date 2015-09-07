@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QDebug>
 #include "poppler-document.h"
+#include "document-page.h"
 
 #define UPDATE_DELAY 10
 #define TILE_SIZE    512
@@ -36,15 +37,20 @@ PopplerDocument *DocumentView::document() const {
 
 void DocumentView::setDocument(PopplerDocument *document) {
   if (m_doc != document) {
+
+    if (m_doc) {
+      QObject::disconnect(m_doc, SIGNAL(aboutToReset()), this, SLOT(init()));
+    }
+
     m_doc = document;
 
-    m_cache->stop();
-    m_cache->wait();
-    m_cache->setDocument(m_doc);
-    m_cache->start();
+    if (m_doc) {
+      QObject::connect(m_doc, SIGNAL(aboutToReset()), this, SLOT(init()));
+    }
 
-    m_timer.start();
     emit documentChanged();
+
+    init();
   }
 }
 
@@ -72,19 +78,45 @@ void DocumentView::setContentY(qreal y) {
   }
 }
 
-void DocumentView::paint(QPainter *painter) {
-  //  qDebug() << Q_FUNC_INFO << m_x << m_y;
+#if 0
+void DocumentView::setZoom(qreal zoom) {
+  if (!qFuzzyCompare(zoom, m_zoom)) {
+    m_zoom = zoom;
+    emit zoomChanged();
 
-  static int foo = 0;
+    init();
+  }
+}
+#endif
+
+void DocumentView::init() {
+  if (m_cache->isRunning()) {
+    m_cache->stop();
+    m_cache->wait();
+  }
+
+  m_cache->clear();
+
+  m_cache->setDocument(m_doc);
+  m_cache->start();
+
+  m_timer.start();
+}
+
+void DocumentView::paint(QPainter *painter) {
+  qDebug() << "Dimensions:" << width() << height();
+  qDebug() << "Position:" << m_x << m_y;
+
+  //  static int foo = 0;
 
   foreach (const Tile& tile, m_tiles) {
     QPointF pt = tile.rect.topLeft() - QPointF(m_x, m_y);
 
     //    qDebug() << "Rendering tile at" << pt;
 
-    painter->drawImage(pt, tile.image);
+    painter->drawImage(QRectF(pt, tile.image.size()), tile.image);
 
-    //    tile.image.save(QString("out/%1.jpg").arg(foo++), "jpeg");
+    //tile.image.save(QString("out/%1.jpg").arg(foo++), "jpeg");
   }
 }
 
@@ -96,24 +128,27 @@ void DocumentView::refreshTiles() {
 
   QList<Tile> tiles;
 
-  //  qDebug() << "viewport: " << m_x << m_y << width() << height();
+  qreal extra = TILE_SIZE * EXTRA_TILES;
 
-  qreal xx = qMax(0.0, m_x - (TILE_SIZE * EXTRA_TILES)),
-    yy = qMax(0.0, m_y - (TILE_SIZE * EXTRA_TILES)),
-    ww = width() + 2 * (TILE_SIZE * EXTRA_TILES),
-    hh = height() + 2 * (TILE_SIZE * EXTRA_TILES);
+  qreal xx = m_x - extra,
+    yy = m_y - extra,
+    ww = width() + 2 * extra,
+    hh = height() + 2 * extra;
 
-  //  qDebug() << "tiles rect" << xx << yy << ww << hh;
+  xx = qMax(0.0, xx);
+  yy = qMax(0.0, yy);
 
-  QList<int> pages = m_doc->findPages(yy, yy + hh);
+  qDebug() << "rect" << xx << yy << ww << hh;
 
-  foreach (int p, pages) {
-    Poppler::Page *page = m_doc->page(p);
-    QRectF pageRect = m_doc->rect(p);
+  QList<DocumentPage *> pages = m_doc->findPages(yy, yy + hh);
+
+  foreach (DocumentPage *page, pages) {
+    QRectF pageRect(QPointF(0, page->y()), page->size(m_doc->dpiX(), m_doc->dpiY()));
     //    qDebug() << "page " << p << " rect " << pageRect;
 
     QRectF rect(xx, yy, ww, hh);
 
+    // TODO: <= ?
     for (int x = pageRect.x(); x < pageRect.right(); x += TILE_SIZE) {
       for (int y = pageRect.y(); y < pageRect.bottom(); y += TILE_SIZE) {
 	QRectF r(x, y, TILE_SIZE, TILE_SIZE);
@@ -133,7 +168,7 @@ void DocumentView::refreshTiles() {
 	  t.rect = r;
 	  t.page = page;
 	  tiles << t;
-	  //	  qDebug() << "Added tile " << t.rect;
+	  qDebug() << "Added tile " << t.rect;
 	}
       }
     }

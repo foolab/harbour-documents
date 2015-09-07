@@ -1,5 +1,6 @@
 #include "tile-cache.h"
 #include "poppler-document.h"
+#include "document-page.h"
 #include <QDebug>
 
 TileCache::TileCache(QObject *parent) :
@@ -51,6 +52,11 @@ void TileCache::stop() {
   m_cond.wakeOne();
 }
 
+void TileCache::clear() {
+  QMutexLocker l(&m_lock);
+  m_cache.clear();
+}
+
 void TileCache::setDocument(PopplerDocument *document) {
   m_doc = document;
 }
@@ -78,7 +84,7 @@ void TileCache::run() {
 	emit tileAvailable(tile);
       } else {
 	// generate it:
-	tile.image = m_doc->tile(tile.page, rect);
+	tile.image = tile.page->tile(m_doc->dpiX(), m_doc->dpiY(), rect);
 	addToCache(tile);
 	emit tileAvailable(tile);
       }

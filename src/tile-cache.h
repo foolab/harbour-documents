@@ -8,10 +8,11 @@
 #include <poppler/qt5/poppler-qt5.h>
 
 class PopplerDocument;
+class DocumentPage;
 
 class Tile {
 public:
-  Poppler::Page *page;
+  DocumentPage *page;
   QRectF rect;
   QImage image;
   qreal y;
@@ -30,6 +31,8 @@ public:
 
   void start();
   void stop();
+
+  void clear();
 
 protected:
   void run();

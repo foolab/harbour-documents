@@ -12,6 +12,7 @@ add_executable(harbour-pdf
   main.cpp
   poppler-document.cpp
   document-view.cpp
+  document-page.cpp
   tile-cache.cpp
   )
 target_link_libraries(harbour-pdf -L${POPPLER_LIB_DIR} -lpoppler-qt5 -lpoppler -lpng12 -lz -lpthread -lfreetype -ltiff -ljpeg -lfontconfig)

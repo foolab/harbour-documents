@@ -36,8 +36,10 @@ signals:
 private slots:
   void refreshTiles();
   void tileAvailable(Tile tile);
+  void init();
 
 private:
+
   PopplerDocument *m_doc;
   TileCache *m_cache;
   qreal m_x;

@@ -4,12 +4,17 @@
 #include <QQuickItem>
 #include <poppler/qt5/poppler-qt5.h>
 
+class DocumentPage;
+
 class PopplerDocument : public QQuickItem {
   Q_OBJECT
 
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
   Q_PROPERTY(qreal documentWidth READ documentWidth NOTIFY documentWidthChanged);
   Q_PROPERTY(qreal documentHeight READ documentHeight NOTIFY documentHeightChanged);
+  Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged);
+  Q_PROPERTY(qreal dpiX READ dpiX NOTIFY dpiXChanged);
+  Q_PROPERTY(qreal dpiY READ dpiY NOTIFY dpiYChanged);
 
 public:
   PopplerDocument(QQuickItem *parent = 0);
@@ -21,25 +26,35 @@ public:
   qreal documentWidth() const;
   qreal documentHeight() const;
 
-  QList<int> findPages(qreal top, qreal bottom);
-  Poppler::Page *page(int p);
-  QRectF rect(int p);
+  qreal zoom() const;
+  void setZoom(qreal zoom);
 
-  QImage tile(Poppler::Page *page, const QRectF& rect);
+  qreal dpiX() { return m_dpiX * m_zoom; }
+  qreal dpiY() { return m_dpiY * m_zoom ; }
+
+  QList<DocumentPage *> findPages(qreal top, qreal bottom);
+  DocumentPage *page(int p);
 
 signals:
+  void aboutToReset();
+  void reset();
+
   void filePathChanged();
   void documentWidthChanged();
   void documentHeightChanged();
+  void zoomChanged();
+  void dpiXChanged();
+  void dpiYChanged();
 
 private:
   void clear();
+  void init(bool clear);
 
-  QList<Poppler::Page *> m_pages;
-  QList<QRectF> m_rects;
+  QList<DocumentPage *> m_pages;
 
   Poppler::Document *m_doc;
   QString m_filePath;
+  qreal m_zoom;
   qreal m_width;
   qreal m_height;
   qreal m_dpiX;
