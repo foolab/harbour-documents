@@ -15,7 +15,7 @@ public:
   QSizeF size(qreal dpiX, qreal dpiY);
   QImage tile(qreal dpiX, qreal dpiY, QRectF& rect);
 
-  //  QList<QRectF> segments(int tileSize);
+  QList<QRectF> segments(int tileSize, qreal dpiX, qreal dpiY);
 
 private:
   Poppler::Page *m_page;

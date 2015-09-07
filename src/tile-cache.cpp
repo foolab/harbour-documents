@@ -24,7 +24,7 @@ QList<Tile> TileCache::requestTiles(QList<Tile>& tiles) {
   while (!tiles.isEmpty()) {
     Tile tile = tiles.takeFirst();
     QRectF rect(tile.rect);
-    rect.setTop(rect.top() - tile.y);
+    rect.setTop(rect.top() - tile.page->y());
 
     if (populateTileFromCacheLocked(tile, rect)) {
       available << tile;
@@ -77,7 +77,7 @@ void TileCache::run() {
     while (!current.isEmpty()) {
       Tile tile = current.takeFirst();
       QRectF rect(tile.rect);
-      rect.setTop(rect.top() - tile.y);
+      rect.setTop(rect.top() - tile.page->y());
 
       // If it's in cache then fetch it from there:
       if (populateTileFromCache(tile, rect)) {
@@ -100,7 +100,7 @@ bool TileCache::populateTileFromCacheLocked(Tile& tile, const QRectF& rect) {
   for (int x = 0; x < m_cache.size(); x++) {
     const Tile& t = m_cache[x];
     QRectF r(t.rect);
-    r.setTop(r.top() - t.y);
+    r.setTop(r.top() - t.page->y());
 
     if (t.page == tile.page && rect == r) {
       tile.image = t.image;

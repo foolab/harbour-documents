@@ -78,17 +78,6 @@ void DocumentView::setContentY(qreal y) {
   }
 }
 
-#if 0
-void DocumentView::setZoom(qreal zoom) {
-  if (!qFuzzyCompare(zoom, m_zoom)) {
-    m_zoom = zoom;
-    emit zoomChanged();
-
-    init();
-  }
-}
-#endif
-
 void DocumentView::init() {
   if (m_cache->isRunning()) {
     m_cache->stop();
@@ -138,38 +127,21 @@ void DocumentView::refreshTiles() {
   xx = qMax(0.0, xx);
   yy = qMax(0.0, yy);
 
+  QRectF rect(xx, yy, ww, hh);
+
   qDebug() << "rect" << xx << yy << ww << hh;
 
   QList<DocumentPage *> pages = m_doc->findPages(yy, yy + hh);
 
   foreach (DocumentPage *page, pages) {
-    QRectF pageRect(QPointF(0, page->y()), page->size(m_doc->dpiX(), m_doc->dpiY()));
-    //    qDebug() << "page " << p << " rect " << pageRect;
-
-    QRectF rect(xx, yy, ww, hh);
-
-    // TODO: <= ?
-    for (int x = pageRect.x(); x < pageRect.right(); x += TILE_SIZE) {
-      for (int y = pageRect.y(); y < pageRect.bottom(); y += TILE_SIZE) {
-	QRectF r(x, y, TILE_SIZE, TILE_SIZE);
-	//	qDebug() << "checking rect " << r;
-	if (rect.intersects(r)) {
-	  // In case our width or height are greater than those of the page
-	  if (r.right() > pageRect.right()) {
-	    r.setRight(pageRect.right());
-	  }
-
-	  if (r.bottom() > pageRect.bottom()) {
-	    r.setBottom(pageRect.bottom());
-	  }
-
-	  Tile t;
-	  t.y = pageRect.top();
-	  t.rect = r;
-	  t.page = page;
-	  tiles << t;
-	  qDebug() << "Added tile " << t.rect;
-	}
+    QList<QRectF> rects = page->segments(TILE_SIZE, m_doc->dpiX(), m_doc->dpiY());
+    foreach (const QRectF r, rects) {
+      if (rect.intersects(r)) {
+	Tile t;
+	t.rect = r;
+	t.page = page;
+	tiles << t;
+	qDebug() << "Added tile " << t.rect;
       }
     }
   }

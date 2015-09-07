@@ -15,7 +15,6 @@ public:
   DocumentPage *page;
   QRectF rect;
   QImage image;
-  qreal y;
 };
 
 class TileCache : public QThread {
