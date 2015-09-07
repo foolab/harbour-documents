@@ -53,11 +53,11 @@ void PopplerDocument::setZoom(qreal zoom) {
 }
 
 void PopplerDocument::clear() {
-  delete m_doc;
-  m_doc = 0;
-
   qDeleteAll(m_pages);
   m_pages.clear();
+
+  delete m_doc;
+  m_doc = 0;
 }
 
 void PopplerDocument::init() {
