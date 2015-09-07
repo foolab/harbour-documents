@@ -5,7 +5,6 @@
 #include "document-page.h"
 
 #define UPDATE_DELAY 10
-#define TILE_SIZE    512
 #define EXTRA_TILES  1
 
 DocumentView::DocumentView(QQuickItem *parent) :
