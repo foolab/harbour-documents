@@ -4,6 +4,26 @@
 #include "tile-request.h"
 #include <QDebug>
 
+#define TILE_MEM (TILE_SIZE * TILE_SIZE * 4)
+#define MAX_MEM (20 * 1024 * 1024) // 20MB
+#define CACHE_ITEMS (MAX_MEM / TILE_MEM)
+
+struct CacheItem {
+  DocumentPage *page;
+  QRectF rect;
+  QImage image;
+  qint64 ts;
+
+  bool operator==(const CacheItem& other) const {
+    return rect == other.rect && page->number() == other.page->number();
+  }
+};
+
+static inline uint qHash(const CacheItem& item) {
+  // Ok this is not as good as I want.
+  return item.page->number();
+}
+
 TileCache::TileCache(QObject *parent) :
   QThread(parent),
   m_running(true),
@@ -62,6 +82,9 @@ void TileCache::run() {
   while (m_running) {
     m_lock.lock();
     if (m_requests.isEmpty()) {
+      // Expire cache:
+      expireCacheLocked();
+
       m_cond.wait(&m_lock);
       m_lock.unlock();
       continue;
@@ -99,17 +122,21 @@ void TileCache::run() {
 }
 
 bool TileCache::populateTileFromCacheLocked(Tile& tile) {
-  for (int x = 0; x < m_cache.size(); x++) {
-    const Tile& t = m_cache[x];
+  CacheItem dummy;
+  dummy.rect = tile.rect;
+  dummy.page = tile.page;
 
-    if (t.page->number() == tile.page->number() && tile.rect == t.rect) {
-      tile.image = t.image;
-      qDebug() << "Served tile from cache";
-      return true;
-    }
+  QSet<CacheItem>::iterator iter = m_cache.find(dummy);
+  if (iter == m_cache.end()) {
+    return false;
   }
 
-  return false;
+  // OK, this is bad but we do not use ts for hashing so I hope it will be safe.
+  const CacheItem& item = *iter;
+  const_cast<CacheItem&>(item).ts = QDateTime::currentMSecsSinceEpoch();
+  tile.image = iter->image;
+
+  return true;
 }
 
 bool TileCache::populateTileFromCache(Tile& tile) {
@@ -120,5 +147,46 @@ bool TileCache::populateTileFromCache(Tile& tile) {
 
 void TileCache::addToCache(Tile& tile) {
   QMutexLocker l(&m_lock);
-  m_cache << tile;
+  CacheItem item;
+  item.page = tile.page;
+  item.rect = tile.rect;
+  item.image = tile.image;
+  item.ts = QDateTime::currentMSecsSinceEpoch();
+  m_cache << item;
+}
+
+void TileCache::expireCacheLocked() {
+  if (m_cache.size() > CACHE_ITEMS) {
+    qDebug() << "Cache size" << m_cache.size() << "and maximum is" << CACHE_ITEMS;
+
+    QMap<qint64, int> map;
+    for (QSet<CacheItem>::const_iterator iter = m_cache.constBegin();
+	 iter != m_cache.constEnd(); iter++) {
+      map.insert(iter->ts, 0);
+    }
+
+    while (m_cache.size() >= CACHE_ITEMS) {
+      if (!map.isEmpty()) {
+	qint64 ts = map.firstKey();
+	map.remove(ts);
+	expireCacheTsLocked(ts);
+      }
+    }
+
+    qDebug() << "Cache size" << m_cache.size();
+  }
+}
+
+void TileCache::expireCacheTsLocked(qint64 ts) {
+  for (QSet<CacheItem>::iterator iter = m_cache.begin();
+       iter != m_cache.end(); iter++) {
+    if (iter->ts == ts) {
+      iter = m_cache.erase(iter);
+      // If we happen to erase the last iter then iter will become end()
+      // and we will happily crash when we increment the pointer above
+      if (iter == m_cache.end()) {
+	return;
+      }
+    }
+  }
 }

@@ -12,6 +12,7 @@
 class PopplerDocument;
 class DocumentPage;
 class TileRequest;
+class CacheItem;
 
 class Tile {
 public:
@@ -46,6 +47,8 @@ private:
   bool populateTileFromCache(Tile& tile);
   bool populateTileFromCacheLocked(Tile& tile);
   void addToCache(Tile& tile);
+  void expireCacheLocked();
+  void expireCacheTsLocked(qint64 ts);
 
   bool m_running;
   PopplerDocument *m_doc;
@@ -53,7 +56,7 @@ private:
   QMutex m_lock;
   QWaitCondition m_cond;
 
-  QList<Tile> m_cache;
+  QSet<CacheItem> m_cache;
   QList<TileRequest *> m_requests;
 };
 
