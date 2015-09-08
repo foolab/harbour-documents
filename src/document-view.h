@@ -5,11 +5,11 @@
 #include <QTimer>
 #include "tile-cache.h"
 
-class PopplerDocument;
+class Document;
 
 class DocumentView : public QQuickPaintedItem {
   Q_OBJECT
-  Q_PROPERTY(PopplerDocument *document READ document WRITE setDocument NOTIFY documentChanged);
+  Q_PROPERTY(Document *document READ document WRITE setDocument NOTIFY documentChanged);
   Q_PROPERTY(qreal contentX READ contentX WRITE setContentX NOTIFY contentXChanged);
   Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged);
 
@@ -17,8 +17,8 @@ public:
   DocumentView(QQuickItem *parent = 0);
   ~DocumentView();
 
-  PopplerDocument *document() const;
-  void setDocument(PopplerDocument *document);
+  Document *document() const;
+  void setDocument(Document *document);
 
   qreal contentX() const;
   void setContentX(qreal x);
@@ -43,7 +43,7 @@ private slots:
   void tileRequestDone(TileRequest *request);
 
 private:
-  PopplerDocument *m_doc;
+  Document *m_doc;
   TileCache *m_cache;
   qreal m_x;
   qreal m_y;

@@ -26,7 +26,7 @@ Rectangle {
         boundsBehavior: Flickable.StopAtBounds
 
         onContentXChanged: console.log("contentX = " + contentX)
-        PopplerDocument {
+        Document {
             id: doc
             filePath: "/home/mohammed/slides.pdf"
             zoom: 1.0

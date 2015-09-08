@@ -1,5 +1,4 @@
 #include "tile-cache.h"
-#include "poppler-document.h"
 #include "document-page.h"
 #include "tile-request.h"
 #include <QDebug>

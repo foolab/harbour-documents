@@ -15,7 +15,7 @@ include_directories(${POPPLER_INCLUDES_DIR})
 add_executable(harbour-pdf
   ${qml}
   main.cpp
-  poppler-document.cpp
+  document.cpp
   document-view.cpp
   document-page.cpp
   tile-cache.cpp

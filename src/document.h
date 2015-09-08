@@ -1,12 +1,12 @@
-#ifndef POPPLER_DOCUMENT_H
-#define POPPLER_DOCUMENT_H
+#ifndef DOCUMENT_H
+#define DOCUMENT_H
 
 #include <QQuickItem>
 #include <poppler/qt5/poppler-qt5.h>
 
 class DocumentPage;
 
-class PopplerDocument : public QQuickItem {
+class Document : public QQuickItem {
   Q_OBJECT
 
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
@@ -17,8 +17,8 @@ class PopplerDocument : public QQuickItem {
   Q_PROPERTY(qreal dpiY READ dpiY NOTIFY dpiYChanged);
 
 public:
-  PopplerDocument(QQuickItem *parent = 0);
-  ~PopplerDocument();
+  Document(QQuickItem *parent = 0);
+  ~Document();
 
   QString filePath() const;
   void setFilePath(const QString& filePath);
@@ -61,4 +61,4 @@ private:
   qreal m_dpiY;
 };
 
-#endif /* POPPLER_DOCUMENT_H */
+#endif /* DOCUMENT_H */

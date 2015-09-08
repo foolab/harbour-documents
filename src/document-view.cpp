@@ -1,7 +1,7 @@
 #include "document-view.h"
 #include <QPainter>
 #include <QDebug>
-#include "poppler-document.h"
+#include "document.h"
 #include "document-page.h"
 #include "tile-request.h"
 
@@ -37,11 +37,11 @@ DocumentView::~DocumentView() {
   }
 }
 
-PopplerDocument *DocumentView::document() const {
+Document *DocumentView::document() const {
   return m_doc;
 }
 
-void DocumentView::setDocument(PopplerDocument *document) {
+void DocumentView::setDocument(Document *document) {
   if (m_doc != document) {
 
     if (m_doc) {

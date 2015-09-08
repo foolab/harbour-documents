@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QQmlError>
 
-#include "poppler-document.h"
+#include "document.h"
 #include "document-view.h"
 
 int main(int argc, char *argv[]) {
@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
 
-  qmlRegisterType<PopplerDocument>("Poppler", 1, 0, "PopplerDocument");
+  qmlRegisterType<Document>("Poppler", 1, 0, "Document");
   qmlRegisterType<DocumentView>("Poppler", 1, 0, "DocumentView");
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
