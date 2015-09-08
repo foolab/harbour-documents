@@ -170,6 +170,8 @@ void TileCache::expireCacheLocked() {
 	qint64 ts = map.firstKey();
 	map.remove(ts);
 	expireCacheTsLocked(ts);
+      } else {
+	break;
       }
     }
 
