@@ -40,6 +40,7 @@ private slots:
   void refreshTiles();
   void tileAdded();
   void init();
+  void tileRequestDone(TileRequest *request);
 
 private:
   PopplerDocument *m_doc;

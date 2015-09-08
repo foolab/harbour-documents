@@ -39,7 +39,7 @@ protected:
   void run();
 
 signals:
-  void tileAvailable(Tile tile);
+  void tileRequestDone(TileRequest *request);
 
 private:
   bool populateTileFromCache(Tile& tile);
@@ -58,7 +58,5 @@ private:
   QSet<CacheItem> m_cache;
   QList<TileRequest *> m_requests;
 };
-
-Q_DECLARE_METATYPE(Tile)
 
 #endif /* TILE_CACHE_H */

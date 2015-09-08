@@ -19,9 +19,9 @@ DocumentView::DocumentView(QQuickItem *parent) :
   m_timer.setInterval(UPDATE_DELAY);
   m_timer.setSingleShot(true);
 
-  qRegisterMetaType<Tile>("Tile");
-
   QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(refreshTiles()));
+  QObject::connect(m_cache, SIGNAL(tileRequestDone(TileRequest *)),
+		   this, SLOT(tileRequestDone(TileRequest *)));
 }
 
 DocumentView::~DocumentView() {
@@ -190,4 +190,12 @@ void DocumentView::refreshTiles() {
 
 void DocumentView::tileAdded() {
   update();
+}
+
+void DocumentView::tileRequestDone(TileRequest *request) {
+  if (request->isExpired()) {
+    delete request;
+  } else {
+    Q_ASSERT(request == m_request);
+  }
 }
