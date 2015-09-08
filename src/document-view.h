@@ -35,17 +35,17 @@ signals:
 
 private slots:
   void refreshTiles();
-  void tileAvailable(Tile tile);
+  void tileAdded();
   void init();
 
 private:
-
   PopplerDocument *m_doc;
   TileCache *m_cache;
   qreal m_x;
   qreal m_y;
   QTimer m_timer;
-  QList<Tile> m_tiles;
+
+  TileRequest *m_request;
 };
 
 #endif /* DOCUMENT_VIEW_H */

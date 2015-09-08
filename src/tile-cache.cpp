@@ -1,6 +1,7 @@
 #include "tile-cache.h"
 #include "poppler-document.h"
 #include "document-page.h"
+#include "tile-request.h"
 #include <QDebug>
 
 TileCache::TileCache(QObject *parent) :
@@ -11,15 +12,14 @@ TileCache::TileCache(QObject *parent) :
 }
 
 TileCache::~TileCache() {
-
+  qDeleteAll(m_requests);
+  m_requests.clear();
 }
 
-QList<Tile> TileCache::requestTiles(QList<Tile>& tiles) {
+TileRequest *TileCache::requestTiles(QList<Tile>& tiles) {
   QMutexLocker l(&m_lock);
 
-  QList<Tile> available;
-
-  m_current.clear();
+  TileRequest *request = new TileRequest(this);
 
   while (!tiles.isEmpty()) {
     Tile tile = tiles.takeFirst();
@@ -27,17 +27,16 @@ QList<Tile> TileCache::requestTiles(QList<Tile>& tiles) {
     rect.setTop(rect.top() - tile.page->y());
 
     if (populateTileFromCacheLocked(tile, rect)) {
-      available << tile;
+      request->addTile(tile);
     } else {
-      m_current << tile;
+      request->addPending(tile);
     }
   }
 
-  if (!m_current.isEmpty()) {
-    m_cond.wakeOne();
-  }
+  m_requests << request;
+  m_cond.wakeOne();
 
-  return available;
+  return request;
 }
 
 void TileCache::start() {
@@ -47,7 +46,8 @@ void TileCache::start() {
 
 void TileCache::stop() {
   QMutexLocker l(&m_lock);
-  m_current.clear();
+  qDeleteAll(m_requests);
+  m_requests.clear();
   m_running = false;
   m_cond.wakeOne();
 }
@@ -64,29 +64,33 @@ void TileCache::setDocument(PopplerDocument *document) {
 void TileCache::run() {
   while (m_running) {
     m_lock.lock();
-    if (m_current.isEmpty()) {
+    if (m_requests.isEmpty()) {
       m_cond.wait(&m_lock);
       m_lock.unlock();
       continue;
     }
 
-    QList<Tile> current = m_current;
-    m_current.clear();
+    TileRequest *request = m_requests.takeFirst();
     m_lock.unlock();
 
-    while (!current.isEmpty()) {
-      Tile tile = current.takeFirst();
+    while (request->hasPending()) {
+      if (request->isExpired()) {
+	request->deleteLater();
+	break;
+      }
+
+      Tile tile = request->takePending();
       QRectF rect(tile.rect);
       rect.setTop(rect.top() - tile.page->y());
 
       // If it's in cache then fetch it from there:
       if (populateTileFromCache(tile, rect)) {
-	emit tileAvailable(tile);
+	request->addTile(tile);
       } else {
 	// generate it:
 	tile.image = tile.page->tile(m_doc->dpiX(), m_doc->dpiY(), rect);
 	addToCache(tile);
-	emit tileAvailable(tile);
+	request->addTile(tile);
       }
 
       if (!m_running) {

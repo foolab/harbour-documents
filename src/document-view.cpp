@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "poppler-document.h"
 #include "document-page.h"
+#include "tile-request.h"
 
 #define UPDATE_DELAY 10
 #define EXTRA_TILES  1
@@ -12,7 +13,8 @@ DocumentView::DocumentView(QQuickItem *parent) :
   m_doc(0),
   m_cache(new TileCache(this)),
   m_x(0),
-  m_y(0) {
+  m_y(0),
+  m_request(0) {
 
   m_timer.setInterval(UPDATE_DELAY);
   m_timer.setSingleShot(true);
@@ -20,14 +22,15 @@ DocumentView::DocumentView(QQuickItem *parent) :
   qRegisterMetaType<Tile>("Tile");
 
   QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(refreshTiles()));
-  QObject::connect(m_cache, SIGNAL(tileAvailable(Tile)),
-		   this, SLOT(tileAvailable(Tile)), Qt::QueuedConnection);
 }
 
 DocumentView::~DocumentView() {
   m_doc = 0;
   m_cache->stop();
   m_cache->wait();
+
+  delete m_request;
+  m_request = 0;
 }
 
 PopplerDocument *DocumentView::document() const {
@@ -97,7 +100,11 @@ void DocumentView::paint(QPainter *painter) {
 
   //  static int foo = 0;
 
-  foreach (const Tile& tile, m_tiles) {
+  if (!m_request) {
+    return;
+  }
+
+  foreach (const Tile& tile, m_request->tiles()) {
     QPointF pt = tile.rect.topLeft() - QPointF(m_x, m_y);
 
     //    qDebug() << "Rendering tile at" << pt << tile.image.size();
@@ -145,13 +152,20 @@ void DocumentView::refreshTiles() {
     }
   }
 
-  m_tiles = m_cache->requestTiles(tiles);
-  if (!m_tiles.isEmpty()) {
+  if (m_request) {
+    QObject::disconnect(m_request, SIGNAL(tileAdded()), this, SLOT(tileAdded()));
+    m_request->expire();
+    m_request->deleteLater();
+  }
+
+  m_request = m_cache->requestTiles(tiles);
+  QObject::connect(m_request, SIGNAL(tileAdded()), this, SLOT(tileAdded()));
+
+  if (!m_request->isEmpty()) {
     update();
   }
 }
 
-void DocumentView::tileAvailable(Tile tile) {
-  m_tiles << tile;
+void DocumentView::tileAdded() {
   update();
 }

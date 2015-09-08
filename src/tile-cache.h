@@ -11,6 +11,7 @@
 
 class PopplerDocument;
 class DocumentPage;
+class TileRequest;
 
 class Tile {
 public:
@@ -26,7 +27,7 @@ public:
   TileCache(QObject *parent = 0);
   ~TileCache();
 
-  QList<Tile> requestTiles(QList<Tile>& tiles);
+  TileRequest *requestTiles(QList<Tile>& tiles);
 
   void setDocument(PopplerDocument *document);
 
@@ -53,7 +54,7 @@ private:
   QWaitCondition m_cond;
 
   QList<Tile> m_cache;
-  QList<Tile> m_current;
+  QList<TileRequest *> m_requests;
 };
 
 Q_DECLARE_METATYPE(Tile)
