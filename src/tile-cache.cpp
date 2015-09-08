@@ -72,7 +72,7 @@ void TileCache::run() {
 
     while (request->hasPending()) {
       if (request->isExpired()) {
-	request->deleteLater();
+	request->done(); // This will delete it
 	break;
       }
 
@@ -89,9 +89,12 @@ void TileCache::run() {
       }
 
       if (!m_running) {
+	request->done();
 	return;
       }
     }
+
+    request->done();
   }
 }
 

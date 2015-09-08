@@ -17,6 +17,7 @@ public:
   void addTile(Tile& tile);
 
   void expire();
+  void done();
 
   Tile takePending();
 
@@ -33,6 +34,7 @@ private:
   QList<Tile> m_tiles;
   QList<Tile> m_pending;
   bool m_expired;
+  bool m_done;
   QMutex m_lock;
 };
 

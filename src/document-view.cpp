@@ -29,8 +29,10 @@ DocumentView::~DocumentView() {
   m_cache->stop();
   m_cache->wait();
 
-  delete m_request;
-  m_request = 0;
+  if (m_request) {
+    m_request->expire();
+    m_request = 0;
+  }
 }
 
 PopplerDocument *DocumentView::document() const {
@@ -156,7 +158,6 @@ void DocumentView::refreshTiles() {
   if (m_request) {
     QObject::disconnect(m_request, SIGNAL(tileAdded()), this, SLOT(tileAdded()));
     m_request->expire();
-    m_request->deleteLater();
   }
 
   m_request = m_cache->requestTiles(tiles);

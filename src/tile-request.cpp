@@ -3,7 +3,8 @@
 
 TileRequest::TileRequest(QObject *parent) :
   QObject(parent),
-  m_expired(false) {
+  m_expired(false),
+  m_done(false) {
 
 }
 
@@ -25,6 +26,19 @@ void TileRequest::addTile(Tile& tile) {
 void TileRequest::expire() {
   QMutexLocker l(&m_lock);
   m_expired = true;
+
+  if (m_done) {
+    deleteLater();
+  }
+}
+
+void TileRequest::done() {
+  QMutexLocker l(&m_lock);
+  m_done = true;
+
+  if (m_expired) {
+    deleteLater();
+  }
 }
 
 Tile TileRequest::takePending() {
