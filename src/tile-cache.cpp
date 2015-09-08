@@ -27,7 +27,8 @@ static inline uint qHash(const CacheItem& item) {
 TileCache::TileCache(QObject *parent) :
   QThread(parent),
   m_running(true),
-  m_doc(0) {
+  m_dpiX(0),
+  m_dpiY(0) {
 
 }
 
@@ -56,7 +57,9 @@ TileRequest *TileCache::requestTiles(QList<Tile>& tiles) {
   return request;
 }
 
-void TileCache::start() {
+void TileCache::start(qreal dpiX, qreal dpiY) {
+  m_dpiX = dpiX;
+  m_dpiY = dpiY;
   m_running = true;
   QThread::start();
 }
@@ -72,10 +75,6 @@ void TileCache::stop() {
 void TileCache::clear() {
   QMutexLocker l(&m_lock);
   m_cache.clear();
-}
-
-void TileCache::setDocument(PopplerDocument *document) {
-  m_doc = document;
 }
 
 void TileCache::run() {
@@ -106,7 +105,7 @@ void TileCache::run() {
 	request->addTile(tile);
       } else {
 	// generate it:
-	tile.image = tile.page->tile(m_doc->dpiX(), m_doc->dpiY(), tile.rect);
+	tile.image = tile.page->tile(m_dpiX, m_dpiY, tile.rect);
 	addToCache(tile);
 	request->addTile(tile);
       }

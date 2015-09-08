@@ -92,10 +92,10 @@ void DocumentView::init() {
 
   m_cache->clear();
 
-  m_cache->setDocument(m_doc);
-  m_cache->start();
-
-  m_timer.start();
+  if (m_doc) {
+    m_cache->start(m_doc->dpiX(), m_doc->dpiY());
+    m_timer.start();
+  }
 }
 
 void DocumentView::paint(QPainter *painter) {

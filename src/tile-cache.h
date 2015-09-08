@@ -30,9 +30,7 @@ public:
 
   TileRequest *requestTiles(QList<Tile>& tiles);
 
-  void setDocument(PopplerDocument *document);
-
-  void start();
+  void start(qreal dpiX, qreal dpiY);
   void stop();
 
   void clear();
@@ -51,7 +49,8 @@ private:
   void expireCacheTsLocked(qint64 ts);
 
   bool m_running;
-  PopplerDocument *m_doc;
+  qreal m_dpiX;
+  qreal m_dpiY;
 
   QMutex m_lock;
   QWaitCondition m_cond;
