@@ -2,17 +2,25 @@ import QtQuick 2.0
 import Poppler 1.0
 
 Rectangle {
-width: 400; height: 600
-Rectangle {
-color: "green"
-anchors.fill: parent
-}
+    width: 400
+    height: 600
+
+    Rectangle {
+        color: "green"
+        anchors.fill: parent
+    }
 
     Flickable {
         id: flick
 
-// TODO: doc.document.Width seems incorrect
-        anchors.fill: parent
+        // TODO: doc.document.width seems incorrect
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            bottom: row.top
+        }
+
         contentWidth: doc.documentWidth
         contentHeight: doc.documentHeight
         boundsBehavior: Flickable.StopAtBounds
@@ -88,5 +96,42 @@ anchors.fill: parent
         document: doc
         contentX: flick.contentX
         contentY: flick.contentY
+    }
+
+    Row {
+        id: row
+        anchors {
+            right: parent.right
+            left: parent.left
+            bottom: parent.bottom
+        }
+
+        height: 100
+
+        MouseArea {
+            width: parent.width / 2
+            height: parent.height
+
+            Text {
+                anchors.centerIn: parent
+                text: "-"
+                font.pixelSize: 36
+            }
+
+            onClicked: doc.zoom -= 0.1
+        }
+
+        MouseArea {
+            width: parent.width / 2
+            height: parent.height
+
+            Text {
+                anchors.centerIn: parent
+                text: "+"
+                font.pixelSize: 36
+            }
+
+            onClicked: doc.zoom += 0.1
+        }
     }
 }
