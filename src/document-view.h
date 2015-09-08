@@ -28,6 +28,9 @@ public:
 
   void paint(QPainter *painter);
 
+protected:
+  void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
+
 signals:
   void documentChanged();
   void contentXChanged();

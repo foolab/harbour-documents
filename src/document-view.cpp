@@ -128,6 +128,14 @@ void DocumentView::paint(QPainter *painter) {
   }
 }
 
+void DocumentView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) {
+  QQuickPaintedItem::geometryChanged(newGeometry, oldGeometry);
+
+  if (newGeometry.size() != oldGeometry.size()) {
+    m_timer.start();
+  }
+}
+
 void DocumentView::refreshTiles() {
   if (!m_doc) {
     update();
