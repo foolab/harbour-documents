@@ -106,9 +106,19 @@ void DocumentView::paint(QPainter *painter) {
     return;
   }
 
+  qreal w = width();
+
   foreach (const Tile& tile, m_request->tiles()) {
     qreal y = tile.rect.top() + tile.page->y() - m_y;
-    QPointF pt(tile.rect.left() - m_x, y);
+
+    qreal pageWidth = tile.page->size(m_doc->dpiX(), m_doc->dpiY()).width();
+    qreal adjX = 0;
+
+    if (w > pageWidth) {
+      adjX = (w - pageWidth) / 2;
+    }
+
+    QPointF pt(tile.rect.left() - m_x + adjX, y);
 
     //    qDebug() << "Rendering tile at" << pt << tile.image.size();
 
