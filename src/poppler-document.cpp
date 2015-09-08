@@ -19,7 +19,12 @@ PopplerDocument::PopplerDocument(QQuickItem *parent) :
 }
 
 PopplerDocument::~PopplerDocument() {
+  // We need to emit those manually because init() emits them
+  // and init() calls clear()
+  // emitting the signals in clear() will cause a double emission of the signals.
+  emit aboutToReset();
   clear();
+  emit reset();
 }
 
 QString PopplerDocument::filePath() const {

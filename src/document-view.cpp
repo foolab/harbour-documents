@@ -26,8 +26,10 @@ DocumentView::DocumentView(QQuickItem *parent) :
 
 DocumentView::~DocumentView() {
   m_doc = 0;
-  m_cache->stop();
-  m_cache->wait();
+  if (m_cache->isRunning()) {
+    m_cache->stop();
+    m_cache->wait();
+  }
 
   if (m_request) {
     m_request->expire();
