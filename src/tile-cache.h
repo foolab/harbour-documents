@@ -43,8 +43,8 @@ signals:
   void tileAvailable(Tile tile);
 
 private:
-  bool populateTileFromCache(Tile& tile, const QRectF& rect);
-  bool populateTileFromCacheLocked(Tile& tile, const QRectF& rect);
+  bool populateTileFromCache(Tile& tile);
+  bool populateTileFromCacheLocked(Tile& tile);
   void addToCache(Tile& tile);
 
   bool m_running;

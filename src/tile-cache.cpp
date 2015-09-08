@@ -23,10 +23,7 @@ TileRequest *TileCache::requestTiles(QList<Tile>& tiles) {
 
   while (!tiles.isEmpty()) {
     Tile tile = tiles.takeFirst();
-    QRectF rect(tile.rect);
-    rect.setTop(rect.top() - tile.page->y());
-
-    if (populateTileFromCacheLocked(tile, rect)) {
+    if (populateTileFromCacheLocked(tile)) {
       request->addTile(tile);
     } else {
       request->addPending(tile);
@@ -80,15 +77,13 @@ void TileCache::run() {
       }
 
       Tile tile = request->takePending();
-      QRectF rect(tile.rect);
-      rect.setTop(rect.top() - tile.page->y());
 
       // If it's in cache then fetch it from there:
-      if (populateTileFromCache(tile, rect)) {
+      if (populateTileFromCache(tile)) {
 	request->addTile(tile);
       } else {
 	// generate it:
-	tile.image = tile.page->tile(m_doc->dpiX(), m_doc->dpiY(), rect);
+	tile.image = tile.page->tile(m_doc->dpiX(), m_doc->dpiY(), tile.rect);
 	addToCache(tile);
 	request->addTile(tile);
       }
@@ -100,13 +95,11 @@ void TileCache::run() {
   }
 }
 
-bool TileCache::populateTileFromCacheLocked(Tile& tile, const QRectF& rect) {
+bool TileCache::populateTileFromCacheLocked(Tile& tile) {
   for (int x = 0; x < m_cache.size(); x++) {
     const Tile& t = m_cache[x];
-    QRectF r(t.rect);
-    r.setTop(r.top() - t.page->y());
 
-    if (t.page == tile.page && rect == r) {
+    if (t.page == tile.page && tile.rect == t.rect) {
       tile.image = t.image;
       qDebug() << "Served tile from cache";
       return true;
@@ -116,10 +109,10 @@ bool TileCache::populateTileFromCacheLocked(Tile& tile, const QRectF& rect) {
   return false;
 }
 
-bool TileCache::populateTileFromCache(Tile& tile, const QRectF& rect) {
+bool TileCache::populateTileFromCache(Tile& tile) {
   QMutexLocker l(&m_lock);
 
-  return populateTileFromCacheLocked(tile, rect);
+  return populateTileFromCacheLocked(tile);
 }
 
 void TileCache::addToCache(Tile& tile) {

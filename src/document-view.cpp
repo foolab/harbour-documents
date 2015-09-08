@@ -105,7 +105,8 @@ void DocumentView::paint(QPainter *painter) {
   }
 
   foreach (const Tile& tile, m_request->tiles()) {
-    QPointF pt = tile.rect.topLeft() - QPointF(m_x, m_y);
+    qreal y = tile.rect.top() + tile.page->y() - m_y;
+    QPointF pt(tile.rect.left() - m_x, y);
 
     //    qDebug() << "Rendering tile at" << pt << tile.image.size();
 
@@ -144,7 +145,7 @@ void DocumentView::refreshTiles() {
     foreach (const QRectF r, rects) {
       if (rect.intersects(r)) {
 	Tile t;
-	t.rect = r;
+	t.rect = r.adjusted(0, -page->y(), 0, -page->y());
 	t.page = page;
 	tiles << t;
 	qDebug() << "Added tile " << t.rect;
