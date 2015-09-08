@@ -14,7 +14,7 @@ public:
   qreal y() const { return m_y; }
   QSizeF size(qreal dpiX, qreal dpiY);
   QImage tile(qreal dpiX, qreal dpiY, QRectF& rect);
-
+  int number() const { return m_num; }
   QList<QRectF> segments(int tileSize, qreal dpiX, qreal dpiY);
 
 private:

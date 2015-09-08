@@ -99,7 +99,7 @@ bool TileCache::populateTileFromCacheLocked(Tile& tile) {
   for (int x = 0; x < m_cache.size(); x++) {
     const Tile& t = m_cache[x];
 
-    if (t.page == tile.page && tile.rect == t.rect) {
+    if (t.page->number() == tile.page->number() && tile.rect == t.rect) {
       tile.image = t.image;
       qDebug() << "Served tile from cache";
       return true;
