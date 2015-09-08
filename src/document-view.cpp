@@ -153,8 +153,8 @@ void DocumentView::refreshTiles() {
     ww = width() + 2 * extra,
     hh = height() + 2 * extra;
 
-  xx = qMax(0.0, xx);
-  yy = qMax(0.0, yy);
+  xx = qMax((qreal)0, xx);
+  yy = qMax((qreal)0, yy);
 
   QRectF rect(xx, yy, ww, hh);
 
