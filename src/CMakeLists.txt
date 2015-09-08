@@ -17,5 +17,5 @@ add_executable(harbour-pdf
   tile-request.cpp
   )
 target_link_libraries(harbour-pdf -L${POPPLER_LIB_DIR} -lpoppler-qt5 -lpoppler -lpng12 -lz -lpthread -lfreetype -ltiff -ljpeg -lfontconfig)
-
+add_dependencies(harbour-pdf poppler)
 qt5_use_modules(harbour-pdf Gui Quick Xml)
