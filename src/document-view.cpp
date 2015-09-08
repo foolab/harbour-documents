@@ -97,8 +97,8 @@ void DocumentView::init() {
 }
 
 void DocumentView::paint(QPainter *painter) {
-  qDebug() << "Dimensions:" << width() << height();
-  qDebug() << "Position:" << m_x << m_y;
+  //  qDebug() << "Dimensions:" << width() << height();
+  //  qDebug() << "Position:" << m_x << m_y;
 
   //  static int foo = 0;
 
@@ -138,7 +138,7 @@ void DocumentView::refreshTiles() {
 
   QRectF rect(xx, yy, ww, hh);
 
-  qDebug() << "rect" << xx << yy << ww << hh;
+  //  qDebug() << "rect" << xx << yy << ww << hh;
 
   QList<DocumentPage *> pages = m_doc->findPages(yy, yy + hh);
 
@@ -150,7 +150,7 @@ void DocumentView::refreshTiles() {
 	t.rect = r.adjusted(0, -page->y(), 0, -page->y());
 	t.page = page;
 	tiles << t;
-	qDebug() << "Added tile " << t.rect;
+	//	qDebug() << "Added tile " << t.rect;
       }
     }
   }
