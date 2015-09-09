@@ -1,8 +1,9 @@
 #include "backend.h"
 #include "poppler-backend.h"
+#include "mupdf-backend.h"
 
 Backend *Backend::create(const QString& filePath) {
-  Backend *backend = new PopplerBackend;
+  Backend *backend = new MupdfBackend;
   if (backend->load(filePath)) {
     return backend;
   }
