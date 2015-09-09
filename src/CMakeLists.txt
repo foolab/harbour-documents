@@ -2,15 +2,14 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5Xml REQUIRED)
-find_package(PNG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(JPEG REQUIRED)
-#find_package(JPEG REQUIRED)
+find_package(ZLIB REQUIRED)
 
 qt5_add_resources(qml qml/qml.qrc)
 
-include_directories(${POPPLER_INCLUDES_DIR})
+include_directories(${CMAKE_BINARY_DIR}/deps/usr/include/)
 
 add_executable(harbour-pdf
   ${qml}
@@ -22,12 +21,12 @@ add_executable(harbour-pdf
   tile-request.cpp
   )
 target_link_libraries(harbour-pdf
-  ${PNG_LIBRARIES}
   ${FREETYPE_LIBRARIES}
   ${TIFF_LIBRARIES}
   ${JPEG_LIBRARIES}
+  ${ZLIB_LIBRARIES}
   -lfontconfig
- -L${POPPLER_LIB_DIR} -lpoppler-qt5 -lpoppler -lpthread)
+ -L${CMAKE_BINARY_DIR}/deps/usr/lib/ -lpoppler-qt5 -lpoppler -lpthread -lpng16)
 
 add_dependencies(harbour-pdf poppler)
 qt5_use_modules(harbour-pdf Gui Quick Xml)
