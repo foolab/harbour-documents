@@ -2,13 +2,14 @@
 #define DOCUMENT_PAGE_H
 
 #include <QObject>
-#include <poppler/qt5/poppler-qt5.h>
+
+class BackendPage;
 
 class DocumentPage : public QObject {
   Q_OBJECT
 
 public:
-  DocumentPage(Poppler::Page *page, int num, qreal y, QObject *parent = 0);
+  DocumentPage(BackendPage *page, int num, qreal y, QObject *parent = 0);
   ~DocumentPage();
 
   qreal y() const { return m_y; }
@@ -18,7 +19,7 @@ public:
   QList<QRectF> segments(int tileSize, qreal dpiX, qreal dpiY);
 
 private:
-  Poppler::Page *m_page;
+  BackendPage *m_page;
   int m_num;
   qreal m_y;
 };

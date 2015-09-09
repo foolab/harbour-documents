@@ -2,9 +2,9 @@
 #define DOCUMENT_H
 
 #include <QQuickItem>
-#include <poppler/qt5/poppler-qt5.h>
 
 class DocumentPage;
+class Backend;
 
 class Document : public QQuickItem {
   Q_OBJECT
@@ -52,7 +52,7 @@ private:
 
   QList<DocumentPage *> m_pages;
 
-  Poppler::Document *m_doc;
+  Backend *m_doc;
   QString m_filePath;
   qreal m_zoom;
   qreal m_width;

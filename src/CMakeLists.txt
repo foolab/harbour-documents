@@ -19,6 +19,7 @@ add_executable(harbour-pdf
   document-page.cpp
   tile-cache.cpp
   tile-request.cpp
+  backend.cpp
   )
 target_link_libraries(harbour-pdf
   ${FREETYPE_LIBRARIES}

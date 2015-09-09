@@ -2,6 +2,7 @@
 #include "document-page.h"
 #include "tile-request.h"
 #include <QDebug>
+#include <QDateTime>
 
 #define TILE_MEM (TILE_SIZE * TILE_SIZE * 4)
 #define MAX_MEM (20 * 1024 * 1024) // 20MB

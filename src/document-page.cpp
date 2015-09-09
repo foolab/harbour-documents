@@ -1,8 +1,9 @@
 #include "document-page.h"
 #include <QImage>
 #include <QDebug>
+#include "backend.h"
 
-DocumentPage::DocumentPage(Poppler::Page *page, int num, qreal y, QObject *parent) :
+DocumentPage::DocumentPage(BackendPage *page, int num, qreal y, QObject *parent) :
   QObject(parent),
   m_page(page),
   m_num(num),
@@ -16,7 +17,7 @@ DocumentPage::~DocumentPage() {
 }
 
 QSizeF DocumentPage::size(qreal dpiX, qreal dpiY) {
-  QSizeF size = m_page->pageSizeF();
+  QSizeF size = m_page->size();
 
   size.setWidth(size.width() / 72.0 * dpiX);
   size.setHeight(size.height() / 72.0 * dpiY);
@@ -44,5 +45,5 @@ QList<QRectF> DocumentPage::segments(int tileSize, qreal dpiX, qreal dpiY) {
 }
 
 QImage DocumentPage::tile(qreal dpiX, qreal dpiY, QRectF& rect) {
-  return m_page->renderToImage(dpiX, dpiY, rect.x(), rect.y(), rect.width(), rect.height());
+  return m_page->render(dpiX, dpiY, rect);
 }

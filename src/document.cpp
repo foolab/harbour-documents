@@ -2,6 +2,7 @@
 #include "document-page.h"
 #include <QGuiApplication>
 #include <QScreen>
+#include "backend.h"
 
 Document::Document(QQuickItem *parent) :
   QQuickItem(parent),
@@ -69,7 +70,7 @@ void Document::init() {
   // TODO: No need to worry about painting for now
   clear();
 
-  m_doc = Poppler::Document::load(m_filePath);
+  m_doc = Backend::create(m_filePath);
 
   if (!m_doc) {
     return;
@@ -80,7 +81,9 @@ void Document::init() {
 
   int pages = m_doc->numPages();
   for (int x = 0; x < pages; x++) {
-    DocumentPage *page = new DocumentPage(m_doc->page(x), x, height, this);
+    BackendPage *backend = m_doc->page(x);
+
+    DocumentPage *page = new DocumentPage(backend, x, height, this);
     m_pages << page;
 
     QSizeF size = page->size(dpiX(), dpiY());
