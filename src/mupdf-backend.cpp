@@ -16,14 +16,14 @@ public:
     m_init(true) {}
 
   ~MupdfPage() {
-    if (m_list) {
-      fz_drop_display_list(m_ctx, m_list);
-      m_list = 0;
-    }
-
     if (m_dev) {
       fz_drop_device(m_ctx, m_dev);
       m_dev = 0;
+    }
+
+    if (m_list) {
+      fz_drop_display_list(m_ctx, m_list);
+      m_list = 0;
     }
 
     fz_drop_page(m_ctx, m_page);
