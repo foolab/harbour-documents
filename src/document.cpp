@@ -25,6 +25,7 @@ Document::~Document() {
   // emitting the signals in clear() will cause a double emission of the signals.
   emit aboutToReset();
   clear();
+  clearDocument();
   emit reset();
 }
 
@@ -39,6 +40,8 @@ void Document::setFilePath(const QString& filePath) {
     emit filePathChanged();
 
     emit aboutToReset();
+    clear();
+    clearDocument();
     init();
     emit reset();
   }
@@ -53,6 +56,7 @@ void Document::setZoom(qreal zoom) {
     m_zoom = zoom;
 
     emit aboutToReset();
+    clear();
     init();
     emit reset();
   }
@@ -61,16 +65,19 @@ void Document::setZoom(qreal zoom) {
 void Document::clear() {
   qDeleteAll(m_pages);
   m_pages.clear();
+}
 
+void Document::clearDocument() {
   delete m_doc;
   m_doc = 0;
 }
 
 void Document::init() {
-  // TODO: No need to worry about painting for now
-  clear();
-
-  m_doc = Backend::create(m_filePath);
+  if (m_doc) {
+    m_doc->reset();
+  } else {
+    m_doc = Backend::create(m_filePath);
+  }
 
   if (!m_doc) {
     return;

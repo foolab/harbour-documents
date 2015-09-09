@@ -13,6 +13,7 @@ public:
   int numPages();
   BackendPage *page(int num);
   bool load(const QString& filePath);
+  void reset();
 
 private:
   fz_document *m_doc;

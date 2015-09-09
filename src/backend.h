@@ -20,10 +20,12 @@ class Backend {
 public:
   static Backend *create(const QString& filePath);
 
+  virtual ~Backend() {}
+
   virtual int numPages() = 0;
   virtual BackendPage *page(int num) = 0;
+  virtual void reset() = 0;
 
-  virtual ~Backend() {}
 
 protected:
   Backend() {}

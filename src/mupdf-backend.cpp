@@ -12,7 +12,8 @@ public:
     m_page(page),
     m_ctx(ctx),
     m_list(0),
-    m_dev(0) {}
+    m_dev(0),
+    m_init(true) {}
 
   ~MupdfPage() {
     if (m_list) {
@@ -38,35 +39,28 @@ public:
   }
 
   QImage render(qreal dpiX, qreal dpiY, const QRectF& rect) {
-    fz_matrix matrix;
-    fz_scale(&matrix, dpiX / 72.0f, dpiY / 72.0f);
+    if (m_init) {
+      fz_scale(&m_matrix, dpiX / 72.0f, dpiY / 72.0f);
 
-    fz_rect r;
-    fz_bound_page(m_ctx, m_page, &r);
-    fz_transform_rect(&r, &matrix);
+      fz_bound_page(m_ctx, m_page, &m_bound);
+      fz_transform_rect(&m_bound, &m_matrix);
+    }
 
-    fz_irect irect;
-    fz_round_rect(&irect, &r);
-
-    // TODO: reset this when zoom changes (after we cache the run result).
     if (!m_list) {
       m_list = fz_new_display_list(m_ctx);
     }
 
-    // TODO: same as above
     if (!m_dev) {
       m_dev = fz_new_list_device(m_ctx, m_list);
+      fz_run_page(m_ctx, m_page, m_dev, &m_matrix, 0);
     }
 
-    // TODO: cache this and reset it when zoom changes
-    fz_run_page(m_ctx, m_page, m_dev, &matrix, 0);
-
     fz_matrix tile;
-    fz_translate(&tile, -r.x0, -r.y0);
+    fz_translate(&tile, -m_bound.x0, -m_bound.y0);
 
     fz_pre_translate(&tile, -rect.x(), -rect.y());
 
-    fz_rect tr = fz_infinite_rect;
+    fz_rect tr;
     tr.x0 = tr.y0 = 0.0;
     int width = tr.x1 = rect.width();
     int height = tr.y1 = rect.height();
@@ -93,6 +87,9 @@ private:
   fz_context *m_ctx;
   fz_display_list *m_list;
   fz_device *m_dev;
+  bool m_init;
+  fz_matrix m_matrix;
+  fz_rect m_bound;
 };
 
 MupdfBackend::MupdfBackend() :
@@ -143,3 +140,6 @@ bool MupdfBackend::load(const QString& filePath) {
   return true;
 }
 
+void MupdfBackend::reset() {
+  // Nothing
+}

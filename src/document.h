@@ -48,6 +48,8 @@ signals:
 
 private:
   void clear();
+  void clearDocument();
+
   void init();
 
   QList<DocumentPage *> m_pages;

@@ -14,6 +14,7 @@ public:
   int numPages();
   BackendPage *page(int num);
   bool load(const QString& filePath);
+  void reset();
 
 private:
   Poppler::Document *m_doc;

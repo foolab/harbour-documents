@@ -46,3 +46,7 @@ bool PopplerBackend::load(const QString& filePath) {
   m_doc = Poppler::Document::load(filePath);
   return m_doc != 0;
 }
+
+void PopplerBackend::reset() {
+  // Nothing
+}
