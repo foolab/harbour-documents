@@ -1,3 +1,12 @@
 [submodule "external/poppler"]
 	path = poppler
 	url = git://git.freedesktop.org/git/poppler/poppler
+[submodule "external/mupdf"]
+	path = external/mupdf
+	url = git://git.ghostscript.com/mupdf.git
+[submodule "external/openjpeg"]
+	path = external/openjpeg
+	url = git@github.com:uclouvain/openjpeg.git
+[submodule "external/ghostpdl"]
+	path = external/ghostpdl
+	url = git://git.ghostscript.com/ghostpdl.git
