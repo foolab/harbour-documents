@@ -4,12 +4,11 @@
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QSet>
 #include <QImage>
-#include <poppler/qt5/poppler-qt5.h>
 
 #define TILE_SIZE    512
 
-class PopplerDocument;
 class DocumentPage;
 class TileRequest;
 class CacheItem;
