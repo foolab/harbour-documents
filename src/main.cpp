@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
 
-  qmlRegisterType<Document>("Poppler", 1, 0, "Document");
-  qmlRegisterType<DocumentView>("Poppler", 1, 0, "DocumentView");
+  qmlRegisterType<Document>("Documents", 1, 0, "Document");
+  qmlRegisterType<DocumentView>("Documents", 1, 0, "DocumentView");
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
 

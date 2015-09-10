@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import Poppler 1.0
+import Documents 1.0
 
 Rectangle {
     width: 400
