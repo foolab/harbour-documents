@@ -19,7 +19,7 @@ add_library(mupdfbackend STATIC mupdf-backend.cpp)
 qt5_use_modules(mupdfbackend Gui Quick Xml)
 add_dependencies(mupdfbackend mupdf)
 
-add_executable(harbour-pdf
+add_executable(harbour-documents
   ${qml}
   main.cpp
   document.cpp
@@ -28,7 +28,7 @@ add_executable(harbour-pdf
   tile-cache.cpp
   backend.cpp
   )
-target_link_libraries(harbour-pdf
+target_link_libraries(harbour-documents
   popplerbackend
   mupdfbackend
   ${FREETYPE_LIBRARIES}
@@ -38,5 +38,5 @@ target_link_libraries(harbour-pdf
   -lfontconfig
  -L${CMAKE_BINARY_DIR}/deps/usr/lib/ -lpoppler-qt5 -lpoppler -lpthread -lpng16 -lmupdf -lopenjp2 -ljbig2dec -lcrypto)
 
-add_dependencies(harbour-pdf popplerbackend)
-qt5_use_modules(harbour-pdf Gui Quick Xml)
+add_dependencies(harbour-documents popplerbackend)
+qt5_use_modules(harbour-documents Gui Quick Xml)

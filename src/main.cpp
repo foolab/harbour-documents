@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   QScopedPointer<QGuiApplication> app(new QGuiApplication(argc, argv));
   QScopedPointer<QQuickView> view(new QQuickView);
 
-  app->setApplicationName("harbour-pdf");
+  app->setApplicationName("harbour-documents");
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
 
