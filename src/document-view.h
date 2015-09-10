@@ -3,6 +3,7 @@
 
 #include <QQuickPaintedItem>
 #include <QTimer>
+#include <QThread>
 #include "tile-cache.h"
 
 class Document;
@@ -38,18 +39,20 @@ signals:
 
 private slots:
   void refreshTiles();
-  void tileAdded();
+  void tileAvailable(const Tile& tile, qint64 cookie);
   void init();
-  void tileRequestDone(TileRequest *request);
 
 private:
+  void deleteCache();
+  void createCache();
+
   Document *m_doc;
   TileCache *m_cache;
   qreal m_x;
   qreal m_y;
   QTimer m_timer;
-
-  TileRequest *m_request;
+  qint64 m_cookie;
+  QList<Tile> m_tiles;
 };
 
 #endif /* DOCUMENT_VIEW_H */

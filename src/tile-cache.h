@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QSet>
+#include <QMap>
 #include <QImage>
 
 #define TILE_SIZE    512
@@ -24,21 +25,20 @@ class TileCache : public QThread {
   Q_OBJECT
 
 public:
-  TileCache(QObject *parent = 0);
+  TileCache(qreal dpiX, qreal dpiY, QObject *parent = 0);
   ~TileCache();
 
-  TileRequest *requestTiles(QList<Tile>& tiles);
+  void requestTiles(QList<Tile>& tiles, qint64 cookie);
 
-  void start(qreal dpiX, qreal dpiY);
+  void start();
   void stop();
-
   void clear();
 
 protected:
   void run();
 
 signals:
-  void tileRequestDone(TileRequest *request);
+  void tileAvailable(const Tile& tile, qint64 cookie);
 
 private:
   bool populateTileFromCache(Tile& tile);
@@ -53,9 +53,10 @@ private:
 
   QMutex m_lock;
   QWaitCondition m_cond;
-
   QSet<CacheItem> m_cache;
-  QList<TileRequest *> m_requests;
+  QMap<qint64, QList<Tile> > m_requests;
 };
+
+Q_DECLARE_METATYPE(Tile);
 
 #endif /* TILE_CACHE_H */

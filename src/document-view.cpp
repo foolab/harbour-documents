@@ -3,7 +3,6 @@
 #include <QDebug>
 #include "document.h"
 #include "document-page.h"
-#include "tile-request.h"
 
 #define UPDATE_DELAY 10
 #define EXTRA_TILES  1
@@ -11,30 +10,21 @@
 DocumentView::DocumentView(QQuickItem *parent) :
   QQuickPaintedItem(parent),
   m_doc(0),
-  m_cache(new TileCache(this)),
+  m_cache(0),
   m_x(0),
   m_y(0),
-  m_request(0) {
+  m_cookie(0) {
 
   m_timer.setInterval(UPDATE_DELAY);
   m_timer.setSingleShot(true);
 
   QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(refreshTiles()));
-  QObject::connect(m_cache, SIGNAL(tileRequestDone(TileRequest *)),
-		   this, SLOT(tileRequestDone(TileRequest *)));
 }
 
 DocumentView::~DocumentView() {
   m_doc = 0;
-  if (m_cache->isRunning()) {
-    m_cache->stop();
-    m_cache->wait();
-  }
-
-  if (m_request) {
-    m_request->expire();
-    m_request = 0;
-  }
+  deleteCache();
+  m_tiles.clear();
 }
 
 Document *DocumentView::document() const {
@@ -85,17 +75,14 @@ void DocumentView::setContentY(qreal y) {
 }
 
 void DocumentView::init() {
-  if (m_cache->isRunning()) {
-    m_cache->stop();
-    m_cache->wait();
-  }
-
-  m_cache->clear();
+  deleteCache();
 
   if (m_doc) {
-    m_cache->start(m_doc->dpiX(), m_doc->dpiY());
-    m_timer.start();
+    createCache();
   }
+
+  m_tiles.clear();
+  m_timer.start();
 }
 
 void DocumentView::paint(QPainter *painter) {
@@ -104,13 +91,13 @@ void DocumentView::paint(QPainter *painter) {
 
   //  static int foo = 0;
 
-  if (!m_request) {
+  if (m_tiles.isEmpty()) {
     return;
   }
 
   qreal w = width();
 
-  foreach (const Tile& tile, m_request->tiles()) {
+  foreach (const Tile& tile, m_tiles) {
     qreal y = tile.rect.top() + tile.page->y() - m_y;
 
     qreal pageWidth = tile.page->size(m_doc->dpiX(), m_doc->dpiY()).width();
@@ -175,27 +162,39 @@ void DocumentView::refreshTiles() {
     }
   }
 
-  if (m_request) {
-    QObject::disconnect(m_request, SIGNAL(tileAdded()), this, SLOT(tileAdded()));
-    m_request->expire();
-  }
+  ++m_cookie;
+  m_cache->requestTiles(tiles, m_cookie);
+}
 
-  m_request = m_cache->requestTiles(tiles);
-  QObject::connect(m_request, SIGNAL(tileAdded()), this, SLOT(tileAdded()));
-
-  if (!m_request->isEmpty()) {
+void DocumentView::tileAvailable(const Tile& tile, qint64 cookie) {
+  if (cookie == m_cookie) {
+    m_tiles << tile;
     update();
-  }
-}
-
-void DocumentView::tileAdded() {
-  update();
-}
-
-void DocumentView::tileRequestDone(TileRequest *request) {
-  if (request->isExpired()) {
-    delete request;
   } else {
-    Q_ASSERT(request == m_request);
+    //    qDebug() << "Skipping old tile";
   }
+}
+
+void DocumentView::deleteCache() {
+  //  qDebug() << Q_FUNC_INFO << m_cache;
+
+  if (m_cache && m_cache->isRunning()) {
+    //    qDebug() << Q_FUNC_INFO << "is running";
+    m_cache->stop();
+    //    qDebug() << Q_FUNC_INFO << "stopped";
+    m_cache->wait();
+    //    qDebug() << Q_FUNC_INFO << "wait done";
+    delete m_cache;
+  } else if (m_cache) {
+    delete m_cache;
+  }
+
+  m_cache = 0;
+}
+
+void DocumentView::createCache() {
+  m_cache = new TileCache(m_doc->dpiX(), m_doc->dpiY(), this);
+  QObject::connect(m_cache, SIGNAL(tileAvailable(const Tile&, qint64)),
+		   this, SLOT(tileAvailable(const Tile&, qint64)));
+  m_cache->start();
 }

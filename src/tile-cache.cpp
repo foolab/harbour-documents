@@ -1,6 +1,5 @@
 #include "tile-cache.h"
 #include "document-page.h"
-#include "tile-request.h"
 #include <QDebug>
 #include <QDateTime>
 
@@ -24,52 +23,37 @@ static inline uint qHash(const CacheItem& item) {
   return item.page->number();
 }
 
-TileCache::TileCache(QObject *parent) :
+TileCache::TileCache(qreal dpiX, qreal dpiY, QObject *parent) :
   QThread(parent),
-  m_running(true),
-  m_dpiX(0),
-  m_dpiY(0) {
+  m_running(false),
+  m_dpiX(dpiX),
+  m_dpiY(dpiY) {
 
+  qRegisterMetaType<Tile>("Tile");
 }
 
 TileCache::~TileCache() {
-  qDeleteAll(m_requests);
   m_requests.clear();
 }
 
-TileRequest *TileCache::requestTiles(QList<Tile>& tiles) {
+void TileCache::requestTiles(QList<Tile>& tiles, qint64 cookie) {
   QMutexLocker l(&m_lock);
-
-  TileRequest *request = new TileRequest(this);
-
-  while (!tiles.isEmpty()) {
-    Tile tile = tiles.takeFirst();
-    if (populateTileFromCacheLocked(tile)) {
-      request->addTile(tile);
-    } else {
-      request->addPending(tile);
-    }
-  }
-
-  m_requests << request;
+  m_requests.insert(cookie, tiles);
   m_cond.wakeOne();
 
-  return request;
+  //  qDebug() << Q_FUNC_INFO << cookie;
 }
 
-void TileCache::start(qreal dpiX, qreal dpiY) {
-  m_dpiX = dpiX;
-  m_dpiY = dpiY;
+void TileCache::start() {
   m_running = true;
   QThread::start();
 }
 
 void TileCache::stop() {
   QMutexLocker l(&m_lock);
-  qDeleteAll(m_requests);
+  m_cond.wakeOne();
   m_requests.clear();
   m_running = false;
-  m_cond.wakeOne();
 }
 
 void TileCache::clear() {
@@ -78,57 +62,41 @@ void TileCache::clear() {
 }
 
 void TileCache::run() {
+  //  qDebug() << Q_FUNC_INFO;
+
+  m_lock.lock();
+
   while (m_running) {
-    m_lock.lock();
     if (m_requests.isEmpty()) {
       // Expire cache:
       expireCacheLocked();
-
+      //      qDebug() << Q_FUNC_INFO << "Waiting for requests";
       m_cond.wait(&m_lock);
-      m_lock.unlock();
       continue;
     }
 
-    TileRequest *request = m_requests.takeFirst();
+    qint64 cookie = m_requests.firstKey();
+    if (m_requests.first().isEmpty()) {
+      m_requests.remove(cookie);
+      continue;
+    }
+
+
+    Tile tile = m_requests.first().takeFirst();
     m_lock.unlock();
-
-    while (request->hasPending()) {
-      if (request->isExpired()) {
-	request->done();
-	emit tileRequestDone(request);
-	request = 0;
-	break;
-      }
-
-      Tile tile = request->takePending();
-
-      // If it's in cache then fetch it from there:
-      if (populateTileFromCache(tile)) {
-	request->addTile(tile);
-      } else {
-	// generate it:
-	tile.image = tile.page->tile(m_dpiX, m_dpiY, tile.rect);
-	addToCache(tile);
-	request->addTile(tile);
-      }
-
-      if (!m_running) {
-	if (request) {
-	  request->done();
-	  emit tileRequestDone(request);
-	  request = 0;
-	}
-
-	return;
-      }
+    if (!populateTileFromCache(tile)) {
+      // generate it:
+      tile.image = tile.page->tile(m_dpiX, m_dpiY, tile.rect);
+      addToCache(tile);
     }
+    m_lock.lock();
 
-    if (request) {
-      request->done();
-      emit tileRequestDone(request);
-      request = 0;
-    }
+    QMetaObject::invokeMethod(this, "tileAvailable", Q_ARG(Tile, tile), Q_ARG(qint64, cookie));
   }
+
+  m_lock.unlock();
+
+  //  qDebug() << Q_FUNC_INFO << "Done";
 }
 
 bool TileCache::populateTileFromCacheLocked(Tile& tile) {
@@ -167,7 +135,7 @@ void TileCache::addToCache(Tile& tile) {
 
 void TileCache::expireCacheLocked() {
   if (m_cache.size() > CACHE_ITEMS) {
-    qDebug() << "Cache size" << m_cache.size() << "and maximum is" << CACHE_ITEMS;
+    //    qDebug() << "Cache size" << m_cache.size() << "and maximum is" << CACHE_ITEMS;
 
     QMap<qint64, int> map;
     for (QSet<CacheItem>::const_iterator iter = m_cache.constBegin();
@@ -185,7 +153,7 @@ void TileCache::expireCacheLocked() {
       }
     }
 
-    qDebug() << "Cache size" << m_cache.size();
+    //    qDebug() << "Cache size" << m_cache.size();
   }
 }
 

@@ -26,7 +26,6 @@ add_executable(harbour-pdf
   document-view.cpp
   document-page.cpp
   tile-cache.cpp
-  tile-request.cpp
   backend.cpp
   )
 target_link_libraries(harbour-pdf
