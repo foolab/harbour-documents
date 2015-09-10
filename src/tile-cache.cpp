@@ -38,6 +38,7 @@ TileCache::~TileCache() {
 
 void TileCache::requestTiles(QList<Tile>& tiles, qint64 cookie) {
   QMutexLocker l(&m_lock);
+  m_requests.clear();
   m_requests.insert(cookie, tiles);
   m_cond.wakeOne();
 
