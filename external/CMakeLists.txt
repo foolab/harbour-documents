@@ -7,7 +7,7 @@ ExternalProject_Add(libpng
 
 ExternalProject_Add(poppler
   URL ${CMAKE_CURRENT_SOURCE_DIR}/poppler
-  CONFIGURE_COMMAND <SOURCE_DIR>/autogen.sh --enable-static --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps/usr/ --enable-xpdf-headers=no --enable-build-type=release --enable-fixedpoint --enable-cmyk=no --enable-libopenjpeg=none --enable-zlib --enable-libcurl=no --disable-cairo-output --disable-poppler-glib --enable-introspection=no --disable-poppler-qt4 --enable-poppler-qt5 --disable-utils --disable-poppler-cpp
+  CONFIGURE_COMMAND sed -ie "s/Qt5Widgets >= 5.0.0//" <SOURCE_DIR>/configure.ac && sed -ie "s/tests demos//" <SOURCE_DIR>/qt5/Makefile.am && <SOURCE_DIR>/autogen.sh --enable-static --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps/usr/ --enable-xpdf-headers=no --enable-build-type=release --enable-fixedpoint --enable-cmyk=no --enable-libopenjpeg=none --enable-zlib --enable-libcurl=no --disable-cairo-output --disable-poppler-glib --enable-introspection=no --disable-poppler-qt4 --enable-poppler-qt5 --disable-utils --disable-poppler-cpp
   )
 
 ExternalProject_Add(openjpeg
