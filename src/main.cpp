@@ -6,6 +6,11 @@
 
 #include "document.h"
 #include "document-view.h"
+#include "documents-browser.h"
+
+#define URI    "Documents"
+#define MAJOR  1
+#define MINOR  0
 
 int main(int argc, char *argv[]) {
   QScopedPointer<QGuiApplication> app(new QGuiApplication(argc, argv));
@@ -15,8 +20,9 @@ int main(int argc, char *argv[]) {
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
 
-  qmlRegisterType<Document>("Documents", 1, 0, "Document");
-  qmlRegisterType<DocumentView>("Documents", 1, 0, "DocumentView");
+  qmlRegisterType<Document>(URI, MAJOR, MINOR, "Document");
+  qmlRegisterType<DocumentView>(URI, MAJOR, MINOR, "DocumentView");
+  qmlRegisterType<DocumentsBrowser>(URI, MAJOR, MINOR, "DocumentsBrowser");
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
 

@@ -27,6 +27,7 @@ add_executable(harbour-documents
   document-page.cpp
   tile-cache.cpp
   backend.cpp
+  documents-browser.cpp
   )
 target_link_libraries(harbour-documents
   popplerbackend
