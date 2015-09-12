@@ -152,7 +152,14 @@ void DocumentView::refreshTiles() {
 void DocumentView::tileAvailable(const Tile& tile, qint64 cookie) {
   if (cookie == m_cookie) {
     m_tiles << tile;
-    update();
+
+    QRectF pageRect(0, 0, width(), height());
+    if (pageRect.intersects(tileRect(tile))) {
+      //      qDebug() << "calling update";
+      update();
+    } else {
+      //      qDebug() << "skipping update";
+    }
   } else {
     //    qDebug() << "Skipping old tile";
   }
