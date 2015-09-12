@@ -16,7 +16,7 @@ Page {
             top: parent.top
             left: parent.left
             right: parent.right
-            bottom: row.top
+            bottom: tools.top
         }
 
         contentWidth: doc.documentWidth
@@ -25,6 +25,11 @@ Page {
 
         Document {
             id: doc
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: tools.shown = !tools.shown
         }
     }
 
@@ -36,14 +41,22 @@ Page {
     }
 
     Row {
-        id: row
+        id: tools
+        property bool shown: true
+
+        visible: height > 0
+
         anchors {
             right: parent.right
             left: parent.left
             bottom: parent.bottom
         }
 
-        height: Theme.itemSizeSmall
+        height: shown ? Theme.itemSizeSmall : 0
+
+        Behavior on height {
+            NumberAnimation { duration: 200 }
+        }
 
         IconButton {
             icon.source: "image://theme/icon-m-back"
