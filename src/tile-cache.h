@@ -19,6 +19,7 @@ public:
   DocumentPage *page;
   QRectF rect;
   QImage image;
+  bool visible;
 };
 
 class TileCache : public QThread {

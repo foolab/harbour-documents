@@ -95,10 +95,9 @@ void DocumentView::paint(QPainter *painter) {
 
   qreal w = width();
 
-  QRectF pageRect(0, 0, width(), height());
   foreach (const Tile& tile, m_tiles) {
     QRectF rect = tileRect(tile);
-    if (pageRect.intersects(rect)) {
+    if (tile.visible) {
       painter->drawImage(rect, tile.image);
     } else {
       //      qDebug() << "Skip tile painting";
@@ -121,6 +120,8 @@ void DocumentView::refreshTiles() {
   }
 
   QList<Tile> tiles;
+
+  QRectF viewport(0, 0, width(), height());
 
   qreal extra = TILE_SIZE * EXTRA_TILES;
 
@@ -147,6 +148,7 @@ void DocumentView::refreshTiles() {
 	t.rect.setWidth(TILE_SIZE);
 	t.rect.setHeight(TILE_SIZE);
 	t.page = page;
+	t.visible = viewport.intersects(tileRect(t));
 	tiles << t;
 	//	qDebug() << "Added tile " << t.rect;
       }
@@ -161,8 +163,7 @@ void DocumentView::tileAvailable(const Tile& tile, qint64 cookie) {
   if (cookie == m_cookie) {
     m_tiles << tile;
 
-    QRectF pageRect(0, 0, width(), height());
-    if (pageRect.intersects(tileRect(tile))) {
+    if (tile.visible) {
       //      qDebug() << "calling update";
       update();
     } else {
