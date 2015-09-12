@@ -155,6 +155,8 @@ void DocumentView::refreshTiles() {
     }
   }
 
+  m_tiles.clear();
+
   ++m_cookie;
   m_cache->requestTiles(tiles, m_cookie);
 }
