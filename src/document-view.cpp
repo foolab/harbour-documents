@@ -15,6 +15,8 @@ DocumentView::DocumentView(QQuickItem *parent) :
   m_y(0),
   m_cookie(0) {
 
+  setRenderTarget(QQuickPaintedItem::FramebufferObject);
+
   m_timer.setInterval(UPDATE_DELAY);
   m_timer.setSingleShot(true);
 
