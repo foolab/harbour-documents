@@ -24,7 +24,6 @@ Page {
 
         Document {
             id: doc
-            zoom: 1.0
         }
     }
 
