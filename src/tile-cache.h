@@ -29,7 +29,7 @@ public:
   TileCache(qreal dpiX, qreal dpiY, QObject *parent = 0);
   ~TileCache();
 
-  void requestTiles(QList<Tile>& tiles, qint64 cookie);
+  QList<Tile> requestTiles(QList<Tile>& tiles, qint64 cookie);
 
   void start();
   void stop();

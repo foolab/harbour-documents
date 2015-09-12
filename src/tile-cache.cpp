@@ -36,13 +36,29 @@ TileCache::~TileCache() {
   m_requests.clear();
 }
 
-void TileCache::requestTiles(QList<Tile>& tiles, qint64 cookie) {
+QList<Tile> TileCache::requestTiles(QList<Tile>& tiles, qint64 cookie) {
   QMutexLocker l(&m_lock);
   m_requests.clear();
-  m_requests.insert(cookie, tiles);
-  m_cond.wakeOne();
+
+  QList<Tile> result;
+  QList<Tile> request;
+
+  foreach (Tile t, tiles) {
+    if (populateTileFromCacheLocked(t)) {
+      result << t;
+    } else {
+      request << t;
+    }
+  }
+
+  if (!request.isEmpty()) {
+    m_requests.insert(cookie, request);
+    m_cond.wakeOne();
+  }
 
   //  qDebug() << Q_FUNC_INFO << cookie;
+
+  return result;
 }
 
 void TileCache::start() {

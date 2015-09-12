@@ -157,10 +157,11 @@ void DocumentView::refreshTiles() {
     }
   }
 
-  m_tiles.clear();
-
   ++m_cookie;
-  m_cache->requestTiles(tiles, m_cookie);
+  m_tiles = m_cache->requestTiles(tiles, m_cookie);
+  if (!m_tiles.isEmpty()) {
+    update();
+  }
 }
 
 void DocumentView::tileAvailable(const Tile& tile, qint64 cookie) {
