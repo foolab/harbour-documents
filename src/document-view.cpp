@@ -4,7 +4,7 @@
 #include "document.h"
 #include "document-page.h"
 
-#define UPDATE_DELAY 10
+#define UPDATE_DELAY 1
 #define EXTRA_TILES  1
 
 DocumentView::DocumentView(QQuickItem *parent) :
