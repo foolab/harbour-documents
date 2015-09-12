@@ -95,8 +95,14 @@ void DocumentView::paint(QPainter *painter) {
 
   qreal w = width();
 
+  QRectF pageRect(0, 0, width(), height());
   foreach (const Tile& tile, m_tiles) {
-    painter->drawImage(tileRect(tile), tile.image);
+    QRectF rect = tileRect(tile);
+    if (pageRect.intersects(rect)) {
+      painter->drawImage(rect, tile.image);
+    } else {
+      //      qDebug() << "Skip tile painting";
+    }
   }
 }
 
