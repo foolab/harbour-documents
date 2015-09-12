@@ -82,10 +82,10 @@ void TileCache::run() {
       continue;
     }
 
-
-    Tile tile = m_requests.first().takeFirst();
+    bool tileDone = false;
+    Tile tile = findBestTileLocked(m_requests.first(), tileDone);
     m_lock.unlock();
-    if (!populateTileFromCache(tile)) {
+    if (!tileDone) {
       // generate it:
       tile.image = tile.page->tile(m_dpiX, m_dpiY, tile.rect);
       addToCache(tile);
@@ -170,4 +170,35 @@ void TileCache::expireCacheTsLocked(qint64 ts) {
       }
     }
   }
+}
+
+Tile TileCache::findBestTileLocked(QList<Tile>& tiles, bool& tileDone) {
+  // find a tile that is visible and already in the cache:
+  int size = tiles.size();
+
+  for (int x = 0; x < size; x++) {
+    Tile tile = tiles[x];
+    if (tile.visible && populateTileFromCacheLocked(tile)) {
+      tileDone = true;
+      tiles.removeAt(x);
+      return tile;
+    }
+  }
+
+  // Nothing. Get a visible tile:
+  for (int x = 0; x < size; x++) {
+    Tile tile = tiles[x];
+    if (tile.visible) {
+      tileDone = populateTileFromCacheLocked(tile);
+      tiles.removeAt(x);
+      return tile;
+    }
+  }
+
+  // Just return any tile:
+  // TODO: We need a way to generate tiles near the center first.
+  Tile tile = tiles.takeFirst();
+  tileDone = populateTileFromCacheLocked(tile);
+
+  return tile;
 }

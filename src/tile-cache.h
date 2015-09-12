@@ -47,6 +47,7 @@ private:
   void addToCache(Tile& tile);
   void expireCacheLocked();
   void expireCacheTsLocked(qint64 ts);
+  Tile findBestTileLocked(QList<Tile>& tiles, bool& tileDone);
 
   bool m_running;
   qreal m_dpiX;
