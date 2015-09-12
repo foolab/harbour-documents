@@ -16,7 +16,7 @@ Document::Document(QQuickItem *parent) :
   m_dpiX = QGuiApplication::primaryScreen()->physicalDotsPerInchX();
   m_dpiY = QGuiApplication::primaryScreen()->physicalDotsPerInchY();
 
-  qDebug() << "DPI: x=" << m_dpiX << " y=" << m_dpiY;
+  //  qDebug() << "DPI: x=" << m_dpiX << " y=" << m_dpiY;
 }
 
 Document::~Document() {
