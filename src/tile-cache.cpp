@@ -4,7 +4,7 @@
 #include <QDateTime>
 
 #define TILE_MEM (TILE_SIZE * TILE_SIZE * 4)
-#define MAX_MEM (20 * 1024 * 1024) // 20MB
+#define MAX_MEM (80 * 1024 * 1024) // 80MB
 #define CACHE_ITEMS (MAX_MEM / TILE_MEM)
 
 struct CacheItem {

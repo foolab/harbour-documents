@@ -5,7 +5,7 @@
 #include "document-page.h"
 
 #define UPDATE_DELAY 1
-#define EXTRA_TILES  1
+#define EXTRA_TILES  2
 
 DocumentView::DocumentView(QQuickItem *parent) :
   QQuickPaintedItem(parent),
