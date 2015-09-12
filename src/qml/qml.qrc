@@ -2,5 +2,7 @@
 <RCC version="1.0">
   <qresource prefix="/qml">
     <file>main.qml</file>
+    <file>DocumentsPage.qml</file>
+    <file>DocumentView.qml</file>
   </qresource>
 </RCC>
