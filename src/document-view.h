@@ -45,6 +45,7 @@ private slots:
 private:
   void deleteCache();
   void createCache();
+  QRectF tileRect(const Tile& tile);
 
   Document *m_doc;
   TileCache *m_cache;

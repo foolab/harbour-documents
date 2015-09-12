@@ -89,8 +89,6 @@ void DocumentView::paint(QPainter *painter) {
   //  qDebug() << "Dimensions:" << width() << height();
   //  qDebug() << "Position:" << m_x << m_y;
 
-  //  static int foo = 0;
-
   if (m_tiles.isEmpty()) {
     return;
   }
@@ -98,22 +96,7 @@ void DocumentView::paint(QPainter *painter) {
   qreal w = width();
 
   foreach (const Tile& tile, m_tiles) {
-    qreal y = tile.rect.top() + tile.page->y() - m_y;
-
-    qreal pageWidth = tile.page->size(m_doc->dpiX(), m_doc->dpiY()).width();
-    qreal adjX = 0;
-
-    if (w > pageWidth) {
-      adjX = (w - pageWidth) / 2;
-    }
-
-    QPointF pt(tile.rect.left() - m_x + adjX, y);
-
-    //    qDebug() << "Rendering tile at" << pt << tile.image.size();
-
-    painter->drawImage(QRectF(pt, tile.image.size()), tile.image);
-
-    //tile.image.save(QString("out/%1.jpg").arg(foo++), "jpeg");
+    painter->drawImage(tileRect(tile), tile.image);
   }
 }
 
@@ -197,4 +180,21 @@ void DocumentView::createCache() {
   QObject::connect(m_cache, SIGNAL(tileAvailable(const Tile&, qint64)),
 		   this, SLOT(tileAvailable(const Tile&, qint64)));
   m_cache->start();
+}
+
+QRectF DocumentView::tileRect(const Tile& tile) {
+  qreal w = width();
+
+  qreal y = tile.rect.top() + tile.page->y() - m_y;
+
+  qreal pageWidth = tile.page->size(m_doc->dpiX(), m_doc->dpiY()).width();
+  qreal adjX = 0;
+
+  if (w > pageWidth) {
+    adjX = (w - pageWidth) / 2;
+  }
+
+  QPointF pt(tile.rect.left() - m_x + adjX, y);
+
+  return QRectF(pt, tile.image.size());
 }
