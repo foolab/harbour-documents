@@ -144,6 +144,8 @@ void DocumentView::refreshTiles() {
       if (rect.intersects(r)) {
 	Tile t;
 	t.rect = r.adjusted(0, -page->y(), 0, -page->y());
+	t.rect.setWidth(TILE_SIZE);
+	t.rect.setHeight(TILE_SIZE);
 	t.page = page;
 	tiles << t;
 	//	qDebug() << "Added tile " << t.rect;
@@ -209,5 +211,5 @@ QRectF DocumentView::tileRect(const Tile& tile) {
 
   QPointF pt(tile.rect.left() - m_x + adjX, y);
 
-  return QRectF(pt, tile.image.size());
+  return QRectF(pt, tile.rect.size());
 }
