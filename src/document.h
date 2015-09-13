@@ -30,7 +30,7 @@ public:
   void setZoom(qreal zoom);
 
   qreal dpiX() { return m_dpiX * m_zoom; }
-  qreal dpiY() { return m_dpiY * m_zoom ; }
+  qreal dpiY() { return m_dpiY * m_zoom; }
 
   QList<DocumentPage *> findPages(qreal top, qreal bottom);
   DocumentPage *page(int p);
