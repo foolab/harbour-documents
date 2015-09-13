@@ -19,8 +19,8 @@ Page {
             bottom: tools.top
         }
 
-        contentWidth: doc.documentWidth
-        contentHeight: doc.documentHeight
+        contentWidth: doc.width
+        contentHeight: doc.height
         boundsBehavior: Flickable.StopAtBounds
 
         Document {

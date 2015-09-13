@@ -7,9 +7,7 @@
 Document::Document(QQuickItem *parent) :
   QQuickItem(parent),
   m_doc(0),
-  m_zoom(1.0),
-  m_width(0),
-  m_height(0) {
+  m_zoom(1.0) {
 
   setFlag(ItemHasContents, false);
 
@@ -105,20 +103,6 @@ void Document::init() {
 
   setWidth(width);
   setHeight(height);
-
-  m_width = width;
-  emit documentWidthChanged();
-
-  m_height = height;
-  emit documentHeightChanged();
-}
-
-qreal Document::documentWidth() const {
-  return m_width;
-}
-
-qreal Document::documentHeight() const {
-  return m_height;
 }
 
 QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
