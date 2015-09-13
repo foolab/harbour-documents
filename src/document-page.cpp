@@ -25,25 +25,6 @@ QSizeF DocumentPage::size(qreal dpiX, qreal dpiY) {
   return size;
 }
 
-QList<QRectF> DocumentPage::segments(int tileSize, qreal dpiX, qreal dpiY) {
-  QSizeF s(size(dpiX, dpiY));
-  QList<QRectF> rects;
-
-  for (int y = m_y; y < s.height() + m_y; y += tileSize) {
-    for (int x = 0; x < s.width(); x += tileSize) {
-      QRectF rect(x, y, tileSize, tileSize);
-      //      qDebug() << "Rect before" << rect;
-      rect.setRight(qMin(rect.right(), s.width()));
-      rect.setBottom(qMin(rect.bottom(), m_y + s.height()));
-      //      qDebug() << "Rect after" << rect;
-
-      rects << rect;
-    }
-  }
-
-  return rects;
-}
-
 QImage DocumentPage::tile(qreal dpiX, qreal dpiY, QRectF& rect) {
   return m_page->render(dpiX, dpiY, rect);
 }

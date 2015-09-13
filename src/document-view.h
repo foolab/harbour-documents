@@ -7,6 +7,7 @@
 #include "tile-cache.h"
 
 class Document;
+class DocumentPage;
 
 class DocumentView : public QQuickPaintedItem {
   Q_OBJECT
@@ -46,6 +47,7 @@ private:
   void deleteCache();
   void createCache();
   QRectF tileRect(const Tile& tile);
+  QList<QRectF> pageRectangles(DocumentPage *page);
 
   Document *m_doc;
   TileCache *m_cache;

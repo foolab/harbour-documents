@@ -142,7 +142,7 @@ void DocumentView::refreshTiles() {
   QList<DocumentPage *> pages = m_doc->findPages(yy, yy + hh);
 
   foreach (DocumentPage *page, pages) {
-    QList<QRectF> rects = page->segments(TILE_SIZE, m_doc->dpiX(), m_doc->dpiY());
+    QList<QRectF> rects = pageRectangles(page);
     foreach (const QRectF r, rects) {
       if (rect.intersects(r)) {
 	Tile t;
@@ -218,4 +218,24 @@ QRectF DocumentView::tileRect(const Tile& tile) {
   QPointF pt(tile.rect.left() - m_x + adjX, y);
 
   return QRectF(pt, tile.rect.size());
+}
+
+QList<QRectF> DocumentView::pageRectangles(DocumentPage *page) {
+  QSizeF size(page->size(m_doc->dpiX(), m_doc->dpiY()));
+  QList<QRectF> rects;
+  qreal pos = page->y();
+
+  for (int y = pos; y < size.height() + pos; y += TILE_SIZE) {
+    for (int x = 0; x < size.width(); x += TILE_SIZE) {
+      QRectF rect(x, y, TILE_SIZE, TILE_SIZE);
+      //      qDebug() << "Rect before" << rect;
+      rect.setRight(qMin(rect.right(), size.width()));
+      rect.setBottom(qMin(rect.bottom(), pos + size.height()));
+      //      qDebug() << "Rect after" << rect;
+
+      rects << rect;
+    }
+  }
+
+  return rects;
 }
