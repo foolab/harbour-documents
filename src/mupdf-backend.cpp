@@ -44,6 +44,7 @@ public:
 
       fz_bound_page(m_ctx, m_page, &m_bound);
       fz_transform_rect(&m_bound, &m_matrix);
+      m_init = false;
     }
 
     if (!m_list) {
