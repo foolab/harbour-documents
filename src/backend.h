@@ -12,6 +12,8 @@ public:
 
   virtual ~BackendPage() {}
 
+  virtual void reset() = 0;
+
 protected:
   BackendPage() {}
 };
@@ -24,8 +26,6 @@ public:
 
   virtual int numPages() = 0;
   virtual BackendPage *page(int num) = 0;
-  virtual void reset() = 0;
-
 
 protected:
   Backend() {}

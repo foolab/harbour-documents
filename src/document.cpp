@@ -1,20 +1,12 @@
 #include "document.h"
 #include "document-page.h"
-#include <QGuiApplication>
-#include <QScreen>
 #include "backend.h"
 
 Document::Document(QQuickItem *parent) :
   QQuickItem(parent),
-  m_doc(0),
-  m_zoom(1.0) {
+  m_doc(0) {
 
   setFlag(ItemHasContents, false);
-
-  m_dpiX = QGuiApplication::primaryScreen()->physicalDotsPerInchX();
-  m_dpiY = QGuiApplication::primaryScreen()->physicalDotsPerInchY();
-
-  //  qDebug() << "DPI: x=" << m_dpiX << " y=" << m_dpiY;
 }
 
 Document::~Document() {
@@ -45,21 +37,6 @@ void Document::setFilePath(const QString& filePath) {
   }
 }
 
-qreal Document::zoom() const {
-  return m_zoom;
-}
-
-void Document::setZoom(qreal zoom) {
-  if (!qFuzzyCompare(zoom, m_zoom)) {
-    m_zoom = zoom;
-
-    emit aboutToReset();
-    clearPages();
-    init();
-    emit reset();
-  }
-}
-
 void Document::clearPages() {
   qDeleteAll(m_pages);
   m_pages.clear();
@@ -72,10 +49,10 @@ void Document::clearDocument() {
 
 void Document::init() {
   if (m_doc) {
-    m_doc->reset();
-  } else {
-    m_doc = Backend::create(m_filePath);
+    delete m_doc;
   }
+
+  m_doc = Backend::create(m_filePath);
 
   if (!m_doc) {
     return;
@@ -88,10 +65,10 @@ void Document::init() {
   for (int x = 0; x < pages; x++) {
     BackendPage *backend = m_doc->page(x);
 
-    DocumentPage *page = new DocumentPage(backend, x, height, this);
+    DocumentPage *page = new DocumentPage(backend, x, QPointF(0, height), this);
     m_pages << page;
 
-    QSizeF size = page->size(dpiX(), dpiY());
+    QSizeF size = page->size();
     qreal rectWidth = size.width();
     qreal rectHeight = size.height();
 
@@ -111,11 +88,8 @@ QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
 
   for (int i = 0; i < m_pages.size(); i++) {
     DocumentPage *page = m_pages[i];
-    qreal y = page->y();
 
-    QSizeF size(page->size(dpiX(), dpiY()));
-
-    QRectF pageRect(QPointF(0, y), size);
+    QRectF pageRect(page->pos(), page->size());
 
     if (pageRect.intersects(rect)) {
       pages << m_pages[i];
@@ -130,4 +104,10 @@ QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
 
 DocumentPage *Document::page(int p) {
   return m_pages[p];
+}
+
+void Document::zoomChanged() {
+  foreach (DocumentPage *page, m_pages) {
+    page->reset();
+  }
 }

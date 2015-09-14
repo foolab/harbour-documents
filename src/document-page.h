@@ -2,6 +2,7 @@
 #define DOCUMENT_PAGE_H
 
 #include <QObject>
+#include <QPointF>
 
 class BackendPage;
 
@@ -9,18 +10,19 @@ class DocumentPage : public QObject {
   Q_OBJECT
 
 public:
-  DocumentPage(BackendPage *page, int num, qreal y, QObject *parent = 0);
+  DocumentPage(BackendPage *page, int num, const QPointF& pos, QObject *parent = 0);
   ~DocumentPage();
 
-  qreal y() const { return m_y; }
-  QSizeF size(qreal dpiX, qreal dpiY);
+  QPointF pos() const;
+  QSizeF size();
   QImage tile(qreal dpiX, qreal dpiY, QRectF& rect);
-  int number() const { return m_num; }
+  int number() const;
+  void reset();
 
 private:
   BackendPage *m_page;
   int m_num;
-  qreal m_y;
+  QPointF m_pos;
 };
 
 #endif /* DOCUMENT_PAGE_H */

@@ -18,14 +18,10 @@ public:
   QString filePath() const;
   void setFilePath(const QString& filePath);
 
-  qreal zoom() const;
-  void setZoom(qreal zoom);
-
-  qreal dpiX() { return m_dpiX * m_zoom; }
-  qreal dpiY() { return m_dpiY * m_zoom; }
-
   QList<DocumentPage *> findPages(qreal top, qreal bottom);
   DocumentPage *page(int p);
+
+  void zoomChanged();
 
 signals:
   void aboutToReset();
@@ -42,9 +38,6 @@ private:
 
   Backend *m_doc;
   QString m_filePath;
-  qreal m_zoom;
-  qreal m_dpiX;
-  qreal m_dpiY;
 };
 
 #endif /* DOCUMENT_H */

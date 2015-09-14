@@ -14,8 +14,8 @@ class DocumentView : public QQuickPaintedItem {
   Q_PROPERTY(Document *document READ document WRITE setDocument NOTIFY documentChanged);
   Q_PROPERTY(qreal contentX READ contentX WRITE setContentX NOTIFY contentXChanged);
   Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged);
-  Q_PROPERTY(qreal dpiX READ dpiX CONSTANT);
-  Q_PROPERTY(qreal dpiY READ dpiY CONSTANT);
+  Q_PROPERTY(qreal dpiX READ dpiX NOTIFY dpiChanged);
+  Q_PROPERTY(qreal dpiY READ dpiY NOTIFY dpiChanged);
   Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged);
 
 public:
@@ -46,6 +46,7 @@ signals:
   void documentChanged();
   void contentXChanged();
   void contentYChanged();
+  void dpiChanged();
   void zoomChanged();
 
 private slots:
@@ -63,6 +64,9 @@ private:
   TileCache *m_cache;
   qreal m_x;
   qreal m_y;
+  qreal m_zoom;
+  qreal m_dpiX;
+  qreal m_dpiY;
   QTimer m_timer;
   qint64 m_cookie;
   QList<Tile> m_tiles;

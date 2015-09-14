@@ -4,6 +4,7 @@
 
 Backend *Backend::create(const QString& filePath) {
   Backend *backend = new MupdfBackend;
+
   if (backend->load(filePath)) {
     return backend;
   }

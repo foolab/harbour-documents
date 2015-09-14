@@ -1,5 +1,7 @@
 #include "document-view.h"
 #include <QPainter>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QDebug>
 #include "document.h"
 #include "document-page.h"
@@ -13,7 +15,13 @@ DocumentView::DocumentView(QQuickItem *parent) :
   m_cache(0),
   m_x(0),
   m_y(0),
+  m_zoom(1.0f),
   m_cookie(0) {
+
+  m_dpiX = QGuiApplication::primaryScreen()->physicalDotsPerInchX();
+  m_dpiY = QGuiApplication::primaryScreen()->physicalDotsPerInchY();
+
+  //  qDebug() << "DPI: x=" << m_dpiX << " y=" << m_dpiY;
 
   setRenderTarget(QQuickPaintedItem::FramebufferObject);
 
@@ -77,22 +85,29 @@ void DocumentView::setContentY(qreal y) {
 }
 
 qreal DocumentView::dpiX() const {
-  return m_doc->dpiX();
+  return m_dpiX * m_zoom;
 }
 
 qreal DocumentView::dpiY() const {
-  return m_doc->dpiY();
+  return m_dpiY * m_zoom;
 }
 
 qreal DocumentView::zoom() const {
-  return m_doc->zoom();
+  return m_zoom;
 }
 
 void DocumentView::setZoom(qreal zoom) {
-  if (!qFuzzyCompare(m_doc->zoom(), zoom)) {
-    m_doc->setZoom(zoom);
+  if (!qFuzzyCompare(m_zoom, zoom)) {
+    m_zoom = zoom;
+    deleteCache();
+
+    if (m_doc) {
+      m_doc->zoomChanged();
+      init();
+    }
 
     emit zoomChanged();
+    emit dpiChanged();
   }
 }
 
@@ -159,14 +174,16 @@ void DocumentView::refreshTiles() {
 
   //  qDebug() << "rect" << xx << yy << ww << hh;
 
-  QList<DocumentPage *> pages = m_doc->findPages(yy, yy + hh);
+  QList<DocumentPage *> pages = m_doc->findPages(yy/dpiY(), (yy + hh)/dpiY());
 
   foreach (DocumentPage *page, pages) {
     QList<QRectF> rects = pageRectangles(page);
+    qreal pos = page->pos().y() * dpiY();
+
     foreach (const QRectF r, rects) {
       if (rect.intersects(r)) {
 	Tile t;
-	t.rect = r.adjusted(0, -page->y(), 0, -page->y());
+	t.rect = r.adjusted(0, -pos, 0, -pos);
 	t.rect.setWidth(TILE_SIZE);
 	t.rect.setHeight(TILE_SIZE);
 	t.page = page;
@@ -226,9 +243,9 @@ void DocumentView::createCache() {
 QRectF DocumentView::tileRect(const Tile& tile) {
   qreal w = width();
 
-  qreal y = tile.rect.top() + tile.page->y() - m_y;
+  qreal y = tile.rect.top() + (tile.page->pos().y() * dpiY()) - m_y;
 
-  qreal pageWidth = tile.page->size(dpiX(), dpiY()).width();
+  qreal pageWidth = tile.page->size().width() * dpiX();
   qreal adjX = 0;
 
   if (w > pageWidth) {
@@ -241,9 +258,12 @@ QRectF DocumentView::tileRect(const Tile& tile) {
 }
 
 QList<QRectF> DocumentView::pageRectangles(DocumentPage *page) {
-  QSizeF size(page->size(dpiX(), dpiY()));
+  QSizeF size(page->size());
+  size.setWidth(size.width() * dpiX());
+  size.setHeight(size.height() * dpiY());
+
   QList<QRectF> rects;
-  qreal pos = page->y();
+  qreal pos = page->pos().y() * dpiY();
 
   for (int y = pos; y < size.height() + pos; y += TILE_SIZE) {
     for (int x = 0; x < size.width(); x += TILE_SIZE) {

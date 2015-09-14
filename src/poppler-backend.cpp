@@ -19,6 +19,10 @@ public:
     return m_page->renderToImage(dpiX, dpiY, rect.x(), rect.y(), rect.width(), rect.height());
   }
 
+  void reset() {
+    // Nothing
+  }
+
 private:
   Poppler::Page *m_page;
 };
@@ -45,8 +49,4 @@ bool PopplerBackend::load(const QString& filePath) {
   Q_ASSERT(m_doc == 0);
   m_doc = Poppler::Document::load(filePath);
   return m_doc != 0;
-}
-
-void PopplerBackend::reset() {
-  // Nothing
 }
