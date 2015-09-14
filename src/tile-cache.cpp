@@ -54,6 +54,8 @@ QList<Tile> TileCache::requestTiles(QList<Tile>& tiles, qint64 cookie) {
   if (!request.isEmpty()) {
     m_requests.insert(cookie, request);
     m_cond.wakeOne();
+  } else {
+    QMetaObject::invokeMethod(this, "requestDone", Qt::QueuedConnection, Q_ARG(qint64, cookie));
   }
 
   //  qDebug() << Q_FUNC_INFO << cookie;
@@ -95,6 +97,7 @@ void TileCache::run() {
     qint64 cookie = m_requests.firstKey();
     if (m_requests.first().isEmpty()) {
       m_requests.remove(cookie);
+      QMetaObject::invokeMethod(this, "requestDone", Q_ARG(qint64, cookie));
       continue;
     }
 

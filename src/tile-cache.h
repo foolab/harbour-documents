@@ -40,6 +40,7 @@ protected:
 
 signals:
   void tileAvailable(const Tile& tile, qint64 cookie);
+  void requestDone(qint64 cookie);
 
 private:
   bool populateTileFromCache(Tile& tile);
