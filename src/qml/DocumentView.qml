@@ -34,6 +34,7 @@ Page {
     }
 
     DocumentView {
+        id: view
         anchors.fill: flick
         document: doc
         contentX: flick.contentX
@@ -65,12 +66,12 @@ Page {
 
         Button {
             text: "+"
-            onClicked: doc.zoom += 0.1
+            onClicked: view.zoom += 0.1
         }
 
         Button {
             text: "-"
-            onClicked: doc.zoom -= 0.1
+            onClicked: view.zoom -= 0.1
         }
     }
 }

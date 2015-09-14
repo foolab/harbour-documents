@@ -10,9 +10,6 @@ class Document : public QQuickItem {
   Q_OBJECT
 
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
-  Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged);
-  Q_PROPERTY(qreal dpiX READ dpiX NOTIFY dpiXChanged);
-  Q_PROPERTY(qreal dpiY READ dpiY NOTIFY dpiYChanged);
 
 public:
   Document(QQuickItem *parent = 0);
@@ -33,11 +30,7 @@ public:
 signals:
   void aboutToReset();
   void reset();
-
   void filePathChanged();
-  void zoomChanged();
-  void dpiXChanged();
-  void dpiYChanged();
 
 private:
   void clearPages();

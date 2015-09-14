@@ -14,6 +14,9 @@ class DocumentView : public QQuickPaintedItem {
   Q_PROPERTY(Document *document READ document WRITE setDocument NOTIFY documentChanged);
   Q_PROPERTY(qreal contentX READ contentX WRITE setContentX NOTIFY contentXChanged);
   Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged);
+  Q_PROPERTY(qreal dpiX READ dpiX CONSTANT);
+  Q_PROPERTY(qreal dpiY READ dpiY CONSTANT);
+  Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged);
 
 public:
   DocumentView(QQuickItem *parent = 0);
@@ -28,6 +31,12 @@ public:
   qreal contentY() const;
   void setContentY(qreal y);
 
+  qreal zoom() const;
+  void setZoom(qreal zoom);
+
+  qreal dpiX() const;
+  qreal dpiY() const;
+
   void paint(QPainter *painter);
 
 protected:
@@ -37,6 +46,7 @@ signals:
   void documentChanged();
   void contentXChanged();
   void contentYChanged();
+  void zoomChanged();
 
 private slots:
   void refreshTiles();

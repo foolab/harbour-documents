@@ -76,6 +76,26 @@ void DocumentView::setContentY(qreal y) {
   }
 }
 
+qreal DocumentView::dpiX() const {
+  return m_doc->dpiX();
+}
+
+qreal DocumentView::dpiY() const {
+  return m_doc->dpiY();
+}
+
+qreal DocumentView::zoom() const {
+  return m_doc->zoom();
+}
+
+void DocumentView::setZoom(qreal zoom) {
+  if (!qFuzzyCompare(m_doc->zoom(), zoom)) {
+    m_doc->setZoom(zoom);
+
+    emit zoomChanged();
+  }
+}
+
 void DocumentView::init() {
   deleteCache();
 
@@ -197,7 +217,7 @@ void DocumentView::deleteCache() {
 }
 
 void DocumentView::createCache() {
-  m_cache = new TileCache(m_doc->dpiX(), m_doc->dpiY(), this);
+  m_cache = new TileCache(dpiX(), dpiY(), this);
   QObject::connect(m_cache, SIGNAL(tileAvailable(const Tile&, qint64)),
 		   this, SLOT(tileAvailable(const Tile&, qint64)));
   m_cache->start();
@@ -208,7 +228,7 @@ QRectF DocumentView::tileRect(const Tile& tile) {
 
   qreal y = tile.rect.top() + tile.page->y() - m_y;
 
-  qreal pageWidth = tile.page->size(m_doc->dpiX(), m_doc->dpiY()).width();
+  qreal pageWidth = tile.page->size(dpiX(), dpiY()).width();
   qreal adjX = 0;
 
   if (w > pageWidth) {
@@ -221,7 +241,7 @@ QRectF DocumentView::tileRect(const Tile& tile) {
 }
 
 QList<QRectF> DocumentView::pageRectangles(DocumentPage *page) {
-  QSizeF size(page->size(m_doc->dpiX(), m_doc->dpiY()));
+  QSizeF size(page->size(dpiX(), dpiY()));
   QList<QRectF> rects;
   qreal pos = page->y();
 
