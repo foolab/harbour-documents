@@ -181,11 +181,11 @@ void DocumentView::refreshTiles() {
     qreal pos = page->pos().y() * dpiY();
 
     foreach (const QRectF r, rects) {
-      if (rect.intersects(r)) {
+      QRectF adjusted(r);
+      adjusted.setTop(r.top() + page->pos().y() * dpiY());
+      if (rect.intersects(adjusted)) {
 	Tile t;
-	t.rect = r.adjusted(0, -pos, 0, -pos);
-	t.rect.setWidth(TILE_SIZE);
-	t.rect.setHeight(TILE_SIZE);
+	t.rect = r;
 	t.page = page;
 	t.visible = viewport.intersects(tileRect(t));
 	tiles << t;
@@ -263,14 +263,12 @@ QList<QRectF> DocumentView::pageRectangles(DocumentPage *page) {
   size.setHeight(size.height() * dpiY());
 
   QList<QRectF> rects;
-  qreal pos = page->pos().y() * dpiY();
-
-  for (int y = pos; y < size.height() + pos; y += TILE_SIZE) {
+  for (int y = 0; y < size.height(); y += TILE_SIZE) {
     for (int x = 0; x < size.width(); x += TILE_SIZE) {
       QRectF rect(x, y, TILE_SIZE, TILE_SIZE);
       //      qDebug() << "Rect before" << rect;
       rect.setRight(qMin(rect.right(), size.width()));
-      rect.setBottom(qMin(rect.bottom(), pos + size.height()));
+      rect.setBottom(qMin(rect.bottom(), size.height()));
       //      qDebug() << "Rect after" << rect;
 
       rects << rect;
