@@ -19,10 +19,10 @@ Document::Document(QQuickItem *parent) :
 
 Document::~Document() {
   // We need to emit those manually because init() emits them
-  // and init() calls clear()
-  // emitting the signals in clear() will cause a double emission of the signals.
+  // and init() calls clearPages()
+  // emitting the signals in clearPages() will cause a double emission of the signals.
   emit aboutToReset();
-  clear();
+  clearPages();
   clearDocument();
   emit reset();
 }
@@ -38,7 +38,7 @@ void Document::setFilePath(const QString& filePath) {
     emit filePathChanged();
 
     emit aboutToReset();
-    clear();
+    clearPages();
     clearDocument();
     init();
     emit reset();
@@ -54,13 +54,13 @@ void Document::setZoom(qreal zoom) {
     m_zoom = zoom;
 
     emit aboutToReset();
-    clear();
+    clearPages();
     init();
     emit reset();
   }
 }
 
-void Document::clear() {
+void Document::clearPages() {
   qDeleteAll(m_pages);
   m_pages.clear();
 }

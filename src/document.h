@@ -40,7 +40,7 @@ signals:
   void dpiYChanged();
 
 private:
-  void clear();
+  void clearPages();
   void clearDocument();
 
   void init();
