@@ -60,7 +60,6 @@ Page {
         document: doc
         contentX: flick.contentX
         contentY: flick.contentY
-onScaleChanged: console.log("scale " + scale + " x " + x + " y " + y)
     }
 
     Row {

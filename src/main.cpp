@@ -7,6 +7,7 @@
 #include "document.h"
 #include "document-view.h"
 #include "documents-browser.h"
+#include "icon-provider.h"
 
 #define URI    "Documents"
 #define MAJOR  1
@@ -19,6 +20,8 @@ int main(int argc, char *argv[]) {
   app->setApplicationName("harbour-documents");
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
+
+  view->engine()->addImageProvider(QLatin1String("svg"), new IconProvider);
 
   qmlRegisterType<Document>(URI, MAJOR, MINOR, "Document");
   qmlRegisterType<DocumentView>(URI, MAJOR, MINOR, "DocumentView");
