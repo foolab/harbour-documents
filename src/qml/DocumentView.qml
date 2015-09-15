@@ -27,9 +27,30 @@ Page {
             id: doc
         }
 
-        MouseArea {
+        PinchArea {
             anchors.fill: parent
-            onClicked: tools.shown = !tools.shown
+
+            pinch {
+                target: view
+                minimumScale: 0.5
+                maximumScale: 100
+            }
+
+            onPinchFinished: {
+                var x = pinch.center.x * view.scale
+                var y = pinch.center.y * view.scale
+                var xpos = pinch.center.x - flick.contentX
+                var ypos = pinch.center.y - flick.contentY
+                flick.contentX = x - xpos
+                flick.contentY = y - ypos
+                view.zoom *= view.scale
+                view.scale = 1.0
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: tools.shown = !tools.shown
+            }
         }
     }
 
@@ -39,12 +60,13 @@ Page {
         document: doc
         contentX: flick.contentX
         contentY: flick.contentY
+onScaleChanged: console.log("scale " + scale + " x " + x + " y " + y)
     }
 
     Row {
         id: tools
         property bool shown: true
-
+        property bool _shown: shown && view.scale == 1.0
         visible: height > 0
 
         anchors {
@@ -53,7 +75,7 @@ Page {
             bottom: parent.bottom
         }
 
-        height: shown ? Theme.itemSizeSmall : 0
+        height: _shown ? Theme.itemSizeSmall : 0
 
         Behavior on height {
             NumberAnimation { duration: 200 }
