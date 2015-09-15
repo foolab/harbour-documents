@@ -33,8 +33,8 @@ add_executable(harbour-documents
   icon-provider.cpp
   )
 target_link_libraries(harbour-documents
-  popplerbackend
-  mupdfbackend
+  -Wl,-whole-archive -L. -lpopplerbackend -Wl,-no-whole-archive
+  -Wl,-whole-archive -L. -lmupdfbackend -Wl,-no-whole-archive
   ${FREETYPE_LIBRARIES}
   ${TIFF_LIBRARIES}
   ${JPEG_LIBRARIES}

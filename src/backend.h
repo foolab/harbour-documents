@@ -4,6 +4,7 @@
 #include <QSizeF>
 #include <QImage>
 #include <QRectF>
+#include <functional>
 
 class BackendPage {
 public:
@@ -27,9 +28,28 @@ public:
   virtual int numPages() = 0;
   virtual BackendPage *page(int num) = 0;
 
+  // This must return int or g++ will barf :/
+  static int registerBackend(const QString& ext, const QString& mime, int score,
+			     const std::function<Backend *(void)>& func);
+
 protected:
   Backend() {}
   virtual bool load(const QString& filePath) = 0;
 };
+
+// we must assign the function return value otherwise g++ will barf
+#define ADD_BACKEND(ext,mime,score,klass)				\
+    static int foo =							\
+      Backend::registerBackend(ext, mime, score,			\
+			       []() -> Backend *{ return new klass; });
+
+/*
+  #define ADD_BACKEND(ext,score,klass)					\
+  namespace {								\
+  static std::function<Backend *(void)>					\
+  klass_func([]() -> Backend *{ return new klass; });			\
+  static int foo = Backend::registerBackend(ext, score, klass_func);	\
+  };
+*/
 
 #endif /* BACKEND_H */
