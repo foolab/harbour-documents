@@ -8,6 +8,7 @@ find_package(JPEG REQUIRED)
 find_package(ZLIB REQUIRED)
 
 qt5_add_resources(qml qml/qml.qrc)
+qt5_add_resources(icons ../icons/icons.qrc)
 
 include_directories(${CMAKE_BINARY_DIR}/deps/usr/include/)
 
@@ -21,6 +22,7 @@ add_dependencies(mupdfbackend mupdf)
 
 add_executable(harbour-documents
   ${qml}
+  ${icons}
   main.cpp
   document.cpp
   document-view.cpp
