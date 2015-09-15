@@ -67,10 +67,10 @@ Page {
         property bool shown: true
         property bool _shown: shown && view.scale == 1.0
         visible: height > 0
+        spacing: Theme.paddingMedium
 
         anchors {
-            right: parent.right
-            left: parent.left
+            horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
         }
 
@@ -85,14 +85,12 @@ Page {
             onClicked: pageStack.pop()
         }
 
-        Button {
-            text: "+"
-            onClicked: view.zoom += 0.1
+        IconButton {
+            icon.source: "image://svg/info.svg?"+Theme.primaryColor
         }
 
-        Button {
-            text: "-"
-            onClicked: view.zoom -= 0.1
+        IconButton {
+            icon.source: "image://svg/goto.svg?"+Theme.primaryColor
         }
     }
 }
