@@ -33,7 +33,7 @@ Page {
             pinch {
                 target: view
                 minimumScale: 0.5
-                maximumScale: 100
+                maximumScale: 2
             }
 
             onPinchFinished: {
