@@ -4,6 +4,7 @@
 #include <QSizeF>
 #include <QImage>
 #include <QRectF>
+#include <QStringList>
 #include <functional>
 
 class BackendPage {
@@ -31,6 +32,7 @@ public:
   // This must return int or g++ will barf :/
   static int registerBackend(const QString& ext, const QString& mime, int score,
 			     const std::function<Backend *(void)>& func);
+  static QStringList supportedExtensions();
 
 protected:
   Backend() {}

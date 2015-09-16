@@ -5,6 +5,19 @@
 
 static std::map<QString, std::map<int, std::list<std::function<Backend*(void)> > > > backends;
 
+QStringList Backend::supportedExtensions() {
+  QStringList ext;
+
+  std::map<QString, std::map<int, std::list<std::function<Backend*(void)> > > >::const_iterator iter;
+  for (iter = backends.cbegin(); iter != backends.cend(); iter++) {
+    if (ext.indexOf(iter->first) == -1) {
+      ext << iter->first;
+    }
+  }
+
+  return ext;
+}
+
 Backend *Backend::create(const QString& filePath) {
   QString ext(QFileInfo(filePath).completeSuffix().toLower());
   if (ext.isEmpty()) {
