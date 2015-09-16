@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QDirIterator>
 #include <QDir>
+#include "backend.h"
 
 // TODO: this is UGLY
 class FilesModel : public QAbstractListModel {
@@ -15,11 +16,21 @@ public:
   FilesModel(QObject *parent = 0) :
     QAbstractListModel(parent) {
     QDirIterator iter(QDir::home(), QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
+    QStringList exts(Backend::supportedExtensions());
 
     while (iter.hasNext()) {
       QString file = iter.next();
 
-      if (file.endsWith(".pdf", Qt::CaseInsensitive)) {
+      QString ext(QFileInfo(file).completeSuffix().toLower());
+      if (ext.isEmpty()) {
+	continue;
+      }
+
+      if (!ext.startsWith('.')){
+	ext.prepend('.');
+      }
+
+      if (exts.indexOf(ext) != -1) {
 	m_files << file;
       }
     }
