@@ -51,4 +51,4 @@ bool PopplerBackend::load(const QString& filePath) {
   return m_doc != 0;
 }
 
-ADD_BACKEND(".pdf","application/pdf",1,PopplerBackend);
+ADD_BACKEND(QList<BackendInfo>() << BackendInfo(".pdf", "application/pdf", 1), PopplerBackend);

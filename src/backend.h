@@ -7,6 +7,21 @@
 #include <QStringList>
 #include <functional>
 
+class Backend;
+
+class BackendInfo {
+public:
+BackendInfo(const QString& ext, const QString& mime, int score) :
+  m_ext(ext),
+  m_mime(mime),
+  m_score(score) {
+  }
+
+  QString m_ext;
+  QString m_mime;
+  int m_score;
+};
+
 class BackendPage {
 public:
   virtual QSizeF size() = 0;
@@ -30,7 +45,7 @@ public:
   virtual BackendPage *page(int num) = 0;
 
   // This must return int or g++ will barf :/
-  static int registerBackend(const QString& ext, const QString& mime, int score,
+  static int registerBackend(const QList<BackendInfo>& info,
 			     const std::function<Backend *(void)>& func);
   static QStringList supportedExtensions();
 
@@ -40,10 +55,9 @@ protected:
 };
 
 // we must assign the function return value otherwise g++ will barf
-#define ADD_BACKEND(ext,mime,score,klass)				\
-    static int foo =							\
-      Backend::registerBackend(ext, mime, score,			\
-			       []() -> Backend *{ return new klass; });
+#define ADD_BACKEND(info,klass)						\
+  static int foo =							\
+    Backend::registerBackend(info, []() -> Backend *{ return new klass; });
 
 /*
   #define ADD_BACKEND(ext,score,klass)					\

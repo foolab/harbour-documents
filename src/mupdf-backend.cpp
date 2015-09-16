@@ -150,4 +150,4 @@ bool MupdfBackend::load(const QString& filePath) {
   return true;
 }
 
-ADD_BACKEND(".pdf","application/pdf",100,MupdfBackend);
+ADD_BACKEND(QList<BackendInfo>() << BackendInfo(".pdf", "application/pdf", 100), MupdfBackend);

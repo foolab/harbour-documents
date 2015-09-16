@@ -53,9 +53,12 @@ Backend *Backend::create(const QString& filePath) {
   return 0;
 }
 
-int Backend::registerBackend(const QString& ext, const QString& mime, int score,
+int Backend::registerBackend(const QList<BackendInfo>& info,
 			     const std::function<Backend *(void)>& func) {
-  backends[ext][score].push_back(func);
+
+  foreach (const BackendInfo& i, info) {
+    backends[i.m_ext][i.m_score].push_back(func);
+  }
 
   return 0;
 }
