@@ -20,8 +20,8 @@ public:
 
     while (iter.hasNext()) {
       QString file = iter.next();
+      QString ext(QFileInfo(file).suffix().toLower());
 
-      QString ext(QFileInfo(file).completeSuffix().toLower());
       if (ext.isEmpty()) {
 	continue;
       }

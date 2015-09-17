@@ -19,7 +19,7 @@ QStringList Backend::supportedExtensions() {
 }
 
 Backend *Backend::create(const QString& filePath) {
-  QString ext(QFileInfo(filePath).completeSuffix().toLower());
+  QString ext(QFileInfo(filePath).suffix().toLower());
   if (ext.isEmpty()) {
     return 0;
   }
