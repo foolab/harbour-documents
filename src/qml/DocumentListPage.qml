@@ -32,7 +32,7 @@ Page {
                 truncationMode: TruncationMode.Fade
                 text: name
             }
-            onClicked: pageStack.push(Qt.resolvedUrl("DocumentView.qml"), {filePath: path})
+            onClicked: pageStack.push(Qt.resolvedUrl("DocumentViewPage.qml"), {filePath: path})
         }
     }
 
