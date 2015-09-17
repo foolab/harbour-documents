@@ -4,8 +4,8 @@ import Documents 1.0
 
 Page {
     allowedOrientations: Orientation.All
-    backNavigation: false
-    showNavigationIndicator: false
+    backNavigation: doc.state != Document.Loaded
+    showNavigationIndicator: doc.state != Document.Loaded
 
     property alias filePath: doc.filePath
 
