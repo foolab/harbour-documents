@@ -5,13 +5,24 @@
 
 class DocumentPage;
 class Backend;
+class DocumentLoader;
 
 class Document : public QQuickItem {
   Q_OBJECT
 
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
+  Q_PROPERTY(State state READ state NOTIFY stateChanged);
+  Q_ENUMS(State);
 
 public:
+  typedef enum {
+    None,
+    Loaded,
+    Locked,
+    Loading,
+    Error,
+  } State;
+
   Document(QQuickItem *parent = 0);
   ~Document();
 
@@ -21,12 +32,19 @@ public:
   QList<DocumentPage *> findPages(qreal top, qreal bottom);
   DocumentPage *page(int p);
 
+  State state() const;
+  void setState(const State& state);
+
   void zoomChanged();
 
 signals:
   void aboutToReset();
-  void reset();
   void filePathChanged();
+  void stateChanged();
+
+private slots:
+  void loaderError();
+  void loaderDone();
 
 private:
   void clearPages();
@@ -34,8 +52,9 @@ private:
 
   void init();
 
+  DocumentLoader *m_loader;
   QList<DocumentPage *> m_pages;
-
+  State m_state;
   Backend *m_doc;
   QString m_filePath;
 };

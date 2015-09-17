@@ -31,6 +31,7 @@ add_executable(harbour-documents
   backend.cpp
   documents-browser.cpp
   icon-provider.cpp
+  document-loader.cpp
   )
 target_link_libraries(harbour-documents
   -Wl,-whole-archive -L.

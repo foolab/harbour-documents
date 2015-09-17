@@ -1,0 +1,46 @@
+#ifndef DOCUMENT_LOADER_H
+#define DOCUMENT_LOADER_H
+
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
+
+class Backend;
+class BackendPage;
+
+class DocumentLoader : public QThread {
+  Q_OBJECT
+
+public:
+  DocumentLoader(QObject *parent = 0);
+  ~DocumentLoader();
+
+  Backend *releaseBackend(QList<BackendPage *>& pages);
+
+  void start(const QString& fileName);
+  void stop();
+
+protected:
+  void run();
+
+public slots:
+  void authenticate(const QString& user, const QString& pass);
+
+signals:
+  void authenticationRequired();
+  void error();
+  void done();
+
+private:
+  void clear();
+
+  QMutex m_lock;
+  QWaitCondition m_cond;
+
+  Backend *m_doc;
+  QList<BackendPage *> m_pages;
+  bool m_running;
+  QString m_fileName;
+};
+
+#endif /* DOCUMENT_LOADER_H */

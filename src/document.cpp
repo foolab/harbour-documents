@@ -1,10 +1,13 @@
 #include "document.h"
 #include "document-page.h"
 #include "backend.h"
+#include "document-loader.h"
 
 Document::Document(QQuickItem *parent) :
   QQuickItem(parent),
-  m_doc(0) {
+  m_loader(0),
+  m_doc(0),
+  m_state(Document::None) {
 
   setFlag(ItemHasContents, false);
 }
@@ -16,7 +19,6 @@ Document::~Document() {
   emit aboutToReset();
   clearPages();
   clearDocument();
-  emit reset();
 }
 
 QString Document::filePath() const {
@@ -29,11 +31,16 @@ void Document::setFilePath(const QString& filePath) {
 
     emit filePathChanged();
 
+    setState(Document::Loading);
+
     emit aboutToReset();
     clearPages();
     clearDocument();
-    init();
-    emit reset();
+
+    m_loader = new DocumentLoader;
+    QObject::connect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
+    QObject::connect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
+    m_loader->start(m_filePath);
   }
 }
 
@@ -45,6 +52,16 @@ void Document::clearPages() {
 void Document::clearDocument() {
   delete m_doc;
   m_doc = 0;
+
+  if (m_loader) {
+    QObject::disconnect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
+    QObject::disconnect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
+    m_loader->stop();
+    m_loader->wait();
+    m_loader->deleteLater();
+    m_loader = 0;
+  }
+
 }
 
 void Document::init() {
@@ -52,7 +69,8 @@ void Document::init() {
     delete m_doc;
   }
 
-  m_doc = Backend::create(m_filePath);
+  QList<BackendPage *> backends;
+  m_doc = m_loader->releaseBackend(backends);
 
   if (!m_doc) {
     return;
@@ -61,9 +79,9 @@ void Document::init() {
   qreal width = 0;
   qreal height = 0;
 
-  int pages = m_doc->numPages();
+  int pages = backends.size();
   for (int x = 0; x < pages; x++) {
-    BackendPage *backend = m_doc->page(x);
+    BackendPage *backend = backends[x];
 
     DocumentPage *page = new DocumentPage(backend, x, QPointF(0, height), this);
     m_pages << page;
@@ -76,10 +94,14 @@ void Document::init() {
     height += rectHeight;
   }
 
+  backends.clear();
+
   qDebug() << "width" << width << "height" << height;
 
   setWidth(width);
   setHeight(height);
+
+  setState(Document::Loaded);
 }
 
 QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
@@ -106,8 +128,27 @@ DocumentPage *Document::page(int p) {
   return m_pages[p];
 }
 
+Document::State Document::state() const {
+  return m_state;
+}
+
+void Document::setState(const Document::State& state) {
+  if (m_state != state) {
+    m_state = state;
+    emit stateChanged();
+  }
+}
+
 void Document::zoomChanged() {
   foreach (DocumentPage *page, m_pages) {
     page->reset();
   }
+}
+
+void Document::loaderError() {
+  // TODO:
+}
+
+void Document::loaderDone() {
+  init();
 }

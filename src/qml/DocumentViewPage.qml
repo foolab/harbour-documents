@@ -9,6 +9,12 @@ Page {
 
     property alias filePath: doc.filePath
 
+    BusyIndicator {
+        anchors.centerIn: parent
+        size: BusyIndicatorSize.Large
+        running: doc.state == Document.Loading
+    }
+
     Flickable {
         id: flick
 
@@ -57,7 +63,7 @@ Page {
     DocumentView {
         id: view
         anchors.fill: flick
-        document: doc
+        document: doc.state == Document.Loaded ? doc : null
         contentX: flick.contentX
         contentY: flick.contentY
     }
@@ -65,7 +71,7 @@ Page {
     Row {
         id: tools
         property bool shown: true
-        property bool _shown: shown && view.scale == 1.0
+        property bool _shown: shown && view.scale == 1.0 && doc.state == Document.Loaded
         visible: height > 0
         spacing: Theme.paddingMedium
 
