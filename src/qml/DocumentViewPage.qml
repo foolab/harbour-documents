@@ -9,6 +9,12 @@ Page {
 
     property alias filePath: doc.filePath
 
+    InfoLabel {
+        visible: doc.state == Document.Error
+        text: qsTr("Failed to open document")
+        anchors.centerIn: parent
+    }
+
     BusyIndicator {
         anchors.centerIn: parent
         size: BusyIndicatorSize.Large
@@ -31,6 +37,24 @@ Page {
 
         Document {
             id: doc
+            onStateChanged: {
+                if (doc.state == Document.Locked) {
+                    pageStack.completeAnimation()
+                    var dlg = pageStack.push(Qt.resolvedUrl("UnlockDialog.qml"))
+                    dlg.rejected.connect(function() {
+                        // We will just pass any password and hope it does not work
+                        // since there is no way I am aware off to easily pop this page
+                        // without hacks. I'd rather show the error.
+                        doc.unlockDocument("")
+//                        pageStack.completeAnimation()
+//                        pageStack.pop()
+                    })
+
+                    dlg.accepted.connect(function() {
+                        doc.unlockDocument(dlg.password)
+                    })
+                 }
+            }
         }
 
         PinchArea {

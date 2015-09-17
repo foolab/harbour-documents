@@ -14,6 +14,8 @@ public:
   BackendPage *page(int num);
   bool load(const QString& filePath);
   void reset();
+  bool isLocked();
+  bool unlock(const QString& password);
 
 private:
   fz_document *m_doc;

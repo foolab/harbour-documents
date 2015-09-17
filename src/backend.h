@@ -44,6 +44,9 @@ public:
   virtual int numPages() = 0;
   virtual BackendPage *page(int num) = 0;
 
+  virtual bool isLocked() = 0;
+  virtual bool unlock(const QString& password) = 0;
+
   // This must return int or g++ will barf :/
   static int registerBackend(const QList<BackendInfo>& info,
 			     const std::function<Backend *(void)>& func);

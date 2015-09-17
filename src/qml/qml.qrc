@@ -4,5 +4,6 @@
     <file>main.qml</file>
     <file>DocumentListPage.qml</file>
     <file>DocumentViewPage.qml</file>
+    <file>UnlockDialog.qml</file>
   </qresource>
 </RCC>

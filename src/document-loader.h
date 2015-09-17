@@ -19,12 +19,13 @@ public:
 
   void start(const QString& fileName);
   void stop();
+  void unlockDocument(const QString& pass);
 
 protected:
   void run();
 
-public slots:
-  void authenticate(const QString& user, const QString& pass);
+signals:
+  void locked();
 
 signals:
   void authenticationRequired();
@@ -41,6 +42,7 @@ private:
   QList<BackendPage *> m_pages;
   bool m_running;
   QString m_fileName;
+  QString m_pass;
 };
 
 #endif /* DOCUMENT_LOADER_H */

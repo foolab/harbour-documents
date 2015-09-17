@@ -150,6 +150,14 @@ bool MupdfBackend::load(const QString& filePath) {
   return true;
 }
 
+bool MupdfBackend::isLocked() {
+  return m_doc && fz_needs_password(m_ctx, m_doc) != 0;
+}
+
+bool MupdfBackend::unlock(const QString& password) {
+  return fz_authenticate_password(m_ctx, m_doc, password.toLatin1().constData()) != 0;
+}
+
 ADD_BACKEND(QList<BackendInfo>()
 	    << BackendInfo(".pdf", "application/pdf", 100)
 	    << BackendInfo(".epub", "application/epub+zip", 1),

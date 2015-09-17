@@ -37,6 +37,9 @@ public:
 
   void zoomChanged();
 
+public slots:
+  void unlockDocument(const QString& pass);
+
 signals:
   void aboutToReset();
   void filePathChanged();
@@ -45,6 +48,7 @@ signals:
 private slots:
   void loaderError();
   void loaderDone();
+  void loaderLocked();
 
 private:
   void clearPages();

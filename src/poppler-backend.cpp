@@ -51,4 +51,12 @@ bool PopplerBackend::load(const QString& filePath) {
   return m_doc != 0;
 }
 
+bool PopplerBackend::isLocked() {
+  return m_doc && m_doc->isLocked();
+}
+
+bool PopplerBackend::unlock(const QString& password) {
+  return m_doc->unlock(QByteArray(), password.toLatin1());
+}
+
 ADD_BACKEND(QList<BackendInfo>() << BackendInfo(".pdf", "application/pdf", 1), PopplerBackend);

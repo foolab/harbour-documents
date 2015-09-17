@@ -14,6 +14,8 @@ public:
   int numPages();
   BackendPage *page(int num);
   bool load(const QString& filePath);
+  bool isLocked();
+  bool unlock(const QString& password);
 
 private:
   Poppler::Document *m_doc;

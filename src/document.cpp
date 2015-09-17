@@ -40,6 +40,7 @@ void Document::setFilePath(const QString& filePath) {
     m_loader = new DocumentLoader;
     QObject::connect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
     QObject::connect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
+    QObject::connect(m_loader, SIGNAL(locked()), this, SLOT(loaderLocked()));
     m_loader->start(m_filePath);
   }
 }
@@ -56,6 +57,7 @@ void Document::clearDocument() {
   if (m_loader) {
     QObject::disconnect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
     QObject::disconnect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
+    QObject::disconnect(m_loader, SIGNAL(locked()), this, SLOT(loaderLocked()));
     m_loader->stop();
     m_loader->wait();
     m_loader->deleteLater();
@@ -146,9 +148,19 @@ void Document::zoomChanged() {
 }
 
 void Document::loaderError() {
-  // TODO:
+  setState(Document::Error);
+  clearDocument();
 }
 
 void Document::loaderDone() {
   init();
+}
+
+void Document::loaderLocked() {
+  setState(Document::Locked);
+}
+
+void Document::unlockDocument(const QString& pass) {
+  setState(Document::Loading);
+  m_loader->unlockDocument(pass);
 }
