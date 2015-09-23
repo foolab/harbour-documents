@@ -59,6 +59,7 @@ private:
   void createCache();
   QRectF tileRect(const Tile& tile);
   QList<QRectF> pageRectangles(DocumentPage *page);
+  void resetZoom();
 
   Document *m_doc;
   TileCache *m_cache;

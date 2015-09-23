@@ -15,7 +15,7 @@ DocumentView::DocumentView(QQuickItem *parent) :
   m_cache(0),
   m_x(0),
   m_y(0),
-  m_zoom(1.0f),
+  m_zoom(0.0f),
   m_cookie(0) {
 
   m_dpiX = QGuiApplication::primaryScreen()->physicalDotsPerInchX();
@@ -57,6 +57,8 @@ void DocumentView::setDocument(Document *document) {
     emit documentChanged();
 
     init();
+
+    resetZoom();
   }
 }
 
@@ -148,6 +150,8 @@ void DocumentView::geometryChanged(const QRectF& newGeometry, const QRectF& oldG
   if (newGeometry.size() != oldGeometry.size()) {
     m_timer.start();
   }
+
+  resetZoom();
 }
 
 void DocumentView::refreshTiles() {
@@ -276,4 +280,12 @@ QList<QRectF> DocumentView::pageRectangles(DocumentPage *page) {
   }
 
   return rects;
+}
+
+void DocumentView::resetZoom() {
+  if (m_zoom == 0 && m_doc && width() > 0) {
+    // final width = m_doc->width() * m_zoom * m_dpiX
+    qreal factor = width() / m_doc->width() / m_dpiX;
+    setZoom(factor);
+  }
 }
