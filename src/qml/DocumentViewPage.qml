@@ -21,7 +21,7 @@ Page {
         running: doc.state == Document.Loading
     }
 
-    Flickable {
+    SilicaFlickable {
         id: flick
 
         anchors {
@@ -58,8 +58,8 @@ Page {
         }
 
         PinchArea {
-            anchors.fill: parent
-
+            width: Math.max(flick.contentWidth, flick.width)
+            height: Math.max(flick.contentHeight, flick.height)
             pinch {
                 target: view
                 minimumScale: 0.5
