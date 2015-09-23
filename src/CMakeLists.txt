@@ -6,6 +6,11 @@ find_package(Freetype REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 
+set(CMAKE_INSTALL_RPATH "/usr/share/harbour-documents/lib/")
+set(CMAKE_SKIP_BUILD_RPATH TRUE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
 qt5_add_resources(qml qml/qml.qrc)
 qt5_add_resources(icons ../icons/icons.qrc)
 
