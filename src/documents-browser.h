@@ -7,13 +7,13 @@ class QAbstractItemModel;
 
 class DocumentsBrowser : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QAbstractItemModel* model READ model NOTIFY modelChanged);
+  Q_PROPERTY(QObject* model READ model NOTIFY modelChanged);
 
 public:
   DocumentsBrowser(QObject *parent = 0);
   ~DocumentsBrowser();
 
-  QAbstractItemModel *model();
+  QObject *model();
 
 signals:
   void modelChanged();

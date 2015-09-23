@@ -77,7 +77,7 @@ DocumentsBrowser::~DocumentsBrowser() {
 
 }
 
-QAbstractItemModel *DocumentsBrowser::model() {
+QObject *DocumentsBrowser::model() {
   if (!m_model) {
     m_model = new FilesModel(this);
   }
