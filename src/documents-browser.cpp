@@ -44,7 +44,7 @@ public:
     if (index.row() < m_files.size()) {
       switch (role) {
       case NameRole:
-	return QFileInfo(m_files[index.row()]).fileName();
+	return QFileInfo(m_files[index.row()]).completeBaseName();
       case PathRole:
 	return m_files[index.row()];
       default:

@@ -25,10 +25,17 @@ Page {
             enabled: view.count == 0
         }
 
-        delegate: BackgroundItem {
+        delegate: ListItem {
             Label {
-                width: parent.width
-                anchors.verticalCenter: parent.verticalCenter
+
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingMedium
+                    right: parent.right
+                    rightMargin: Theme.paddingMedium
+                    verticalCenter: parent.verticalCenter
+                }
+
                 truncationMode: TruncationMode.Fade
                 text: name
             }
