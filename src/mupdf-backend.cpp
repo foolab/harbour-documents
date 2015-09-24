@@ -80,6 +80,10 @@ public:
     clear();
   }
 
+  qreal toPixels(qreal value) const {
+    return value / 72.0f;
+  }
+
 private:
   void clear() {
     if (m_dev) {

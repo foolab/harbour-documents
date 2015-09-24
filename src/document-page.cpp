@@ -23,8 +23,8 @@ QPointF DocumentPage::pos() const {
 QSizeF DocumentPage::size() {
   QSizeF size(m_page->size());
 
-  size.setWidth(size.width() / 72.0f);
-  size.setHeight(size.height() / 72.0f);
+  size.setWidth(m_page->toPixels(size.width()));
+  size.setHeight(m_page->toPixels(size.height()));
 
   return size;
 }

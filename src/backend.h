@@ -31,6 +31,8 @@ public:
 
   virtual void reset() = 0;
 
+  virtual qreal toPixels(qreal value) const = 0;
+
 protected:
   BackendPage() {}
 };

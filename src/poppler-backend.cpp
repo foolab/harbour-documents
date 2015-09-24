@@ -23,6 +23,10 @@ public:
     // Nothing
   }
 
+  qreal toPixels(qreal value) const {
+    return value / 72.0f;
+  }
+
 private:
   Poppler::Page *m_page;
 };
