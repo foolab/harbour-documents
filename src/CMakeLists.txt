@@ -60,3 +60,5 @@ target_link_libraries(harbour-documents
   ${PNG_LIBRARIES}
   ${BOOSTER_LDFLAGS}
  -L${CMAKE_BINARY_DIR}/deps/usr/lib/ -lpoppler-qt5 -lpoppler -lpthread -lmupdf -lopenjp2 -ljbig2dec -ljpeg -lfreetype -ldl)
+
+install(TARGETS harbour-documents DESTINATION "/usr/bin/")
