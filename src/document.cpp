@@ -51,9 +51,6 @@ void Document::clearPages() {
 }
 
 void Document::clearDocument() {
-  delete m_doc;
-  m_doc = 0;
-
   if (m_loader) {
     QObject::disconnect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
     QObject::disconnect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
@@ -64,6 +61,8 @@ void Document::clearDocument() {
     m_loader = 0;
   }
 
+  delete m_doc;
+  m_doc = 0;
 }
 
 void Document::init() {
