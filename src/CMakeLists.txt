@@ -14,7 +14,8 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 qt5_add_resources(qml qml/qml.qrc)
 qt5_add_resources(icons ../icons/icons.qrc)
 
-include_directories(${CMAKE_BINARY_DIR}/deps/usr/include/)
+include_directories(${CMAKE_BINARY_DIR}/deps/usr/include/
+  ${CMAKE_SOURCE_DIR}/external/)
 
 add_library(popplerbackend STATIC poppler-backend.cpp)
 qt5_use_modules(popplerbackend Gui Quick Xml)
@@ -23,6 +24,9 @@ add_dependencies(popplerbackend poppler)
 add_library(mupdfbackend STATIC mupdf-backend.cpp)
 qt5_use_modules(mupdfbackend Gui Quick Xml)
 add_dependencies(mupdfbackend mupdf)
+
+add_library(lobackend STATIC lo-backend.cpp)
+qt5_use_modules(lobackend Gui Quick Xml)
 
 add_executable(harbour-documents
   ${qml}
@@ -46,7 +50,8 @@ target_link_libraries(harbour-documents
   -Wl,-whole-archive -L.
   popplerbackend
   mupdfbackend
+  lobackend
   -Wl,-no-whole-archive
   ${ZLIB_LIBRARIES}
   ${PNG_LIBRARIES}
- -L${CMAKE_BINARY_DIR}/deps/usr/lib/ -lpoppler-qt5 -lpoppler -lpthread -lmupdf -lopenjp2 -ljbig2dec -ljpeg -lfreetype)
+ -L${CMAKE_BINARY_DIR}/deps/usr/lib/ -lpoppler-qt5 -lpoppler -lpthread -lmupdf -lopenjp2 -ljbig2dec -ljpeg -lfreetype -ldl)
