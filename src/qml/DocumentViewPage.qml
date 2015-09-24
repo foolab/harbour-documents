@@ -9,6 +9,11 @@ Page {
 
     property alias filePath: doc.filePath
 
+    DocumentSettings {
+        id: docSettings
+        zoom: view.zoom
+    }
+
     InfoLabel {
         visible: doc.state == Document.Error
         text: qsTr("Failed to open document")
@@ -23,6 +28,13 @@ Page {
 
     SilicaFlickable {
         id: flick
+        contentX: docSettings.position.x
+        contentY: docSettings.position.y
+        onMovingChanged: {
+            if (!flick.moving) {
+                docSettings.position = Qt.point(flick.contentX, flick.contentY)
+            }
+        }
 
         anchors {
             top: parent.top
@@ -38,7 +50,9 @@ Page {
         Document {
             id: doc
             onStateChanged: {
-                if (doc.state == Document.Locked) {
+                if (doc.state == Document.Loaded) {
+                    docSettings.load(doc.filePath)
+                } else if (doc.state == Document.Locked) {
                     pageStack.completeAnimation()
                     var dlg = pageStack.push(Qt.resolvedUrl("UnlockDialog.qml"))
                     dlg.rejected.connect(function() {
@@ -90,6 +104,7 @@ Page {
         document: doc.state == Document.Loaded ? doc : null
         contentX: flick.contentX
         contentY: flick.contentY
+        zoom: docSettings.zoom
     }
 
     Row {
