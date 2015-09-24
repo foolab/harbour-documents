@@ -60,6 +60,7 @@ void DocumentSettings::load(const QString& filePath) {
   m_settings = new QSettings(ini, QSettings::IniFormat, this);
 
   m_settings->setValue("info/filePath", path);
+  m_settings->setValue("info/version", 1);
 
   emit zoomChanged();
   emit positionChanged();
