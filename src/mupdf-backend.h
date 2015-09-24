@@ -13,7 +13,6 @@ public:
   int numPages();
   BackendPage *page(int num);
   bool load(const QString& filePath);
-  void reset();
   bool isLocked();
   bool unlock(const QString& password);
 
