@@ -3,6 +3,7 @@
 #include <QScopedPointer>
 #include <QDebug>
 #include <QQmlError>
+#include <MDeclarativeCache>
 
 #include "document.h"
 #include "document-view.h"
@@ -14,11 +15,14 @@
 #define MAJOR  1
 #define MINOR  0
 
-int main(int argc, char *argv[]) {
-  QScopedPointer<QGuiApplication> app(new QGuiApplication(argc, argv));
-  QScopedPointer<QQuickView> view(new QQuickView);
+Q_DECL_EXPORT int
+main(int argc, char *argv[]) {
+  QScopedPointer<QGuiApplication> app(MDeclarativeCache::qApplication(argc, argv));
+  QScopedPointer<QQuickView> view(MDeclarativeCache::qQuickView());
 
   app->setApplicationName("harbour-documents");
+  app->setApplicationDisplayName(QObject::tr("Document viewer"));
+  view->setTitle(app->applicationDisplayName());
 
   view->setResizeMode(QQuickView::SizeRootObjectToView);
 
