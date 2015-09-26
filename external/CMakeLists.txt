@@ -31,11 +31,10 @@ ExternalProject_Add(poppler
   )
 
 ExternalProject_Add(mupdf
-  DEPENDS openjpeg jbig2dec libjpeg libtiff
+  DEPENDS openjpeg jbig2dec libjpeg libtiff X11
   URL ${CMAKE_CURRENT_SOURCE_DIR}/mupdf
   CONFIGURE_COMMAND /bin/true
   BUILD_IN_SOURCE 1
-  # TODO: touching is a hack to avoid needing x11. What can I do if mupdf has a sucky build system?
-  BUILD_COMMAND PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/pkgconfig LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/ ${CMAKE_CURRENT_SOURCE_DIR}/build_mupdf.sh ${CMAKE_BINARY_DIR}/deps/usr/include/ && touch build/release/mudraw && touch build/release/mutool && touch build/release/mupdf-x11 && touch build/release/mujstest && touch build/release/mupdf-x11-curl
-  INSTALL_COMMAND DESTDIR=${CMAKE_BINARY_DIR}/deps/ PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/pkgconfig ${CMAKE_CURRENT_SOURCE_DIR}/build_mupdf.sh ${CMAKE_BINARY_DIR}/deps/usr/include/ install
+  BUILD_COMMAND PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/pkgconfig LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/:${CMAKE_BINARY_DIR}/fakelibs verbose=yes make release XCFLAGS=-I${CMAKE_BINARY_DIR}/deps/usr/include/\ -Iinclude/mupdf\ -I${CMAKE_SOURCE_DIR}/fakelibs XLIBS=-L${CMAKE_BINARY_DIR}/fakelibs\ -lX11
+  INSTALL_COMMAND make build=release install prefix=/usr DESTDIR=${CMAKE_BINARY_DIR}/deps/
   )
