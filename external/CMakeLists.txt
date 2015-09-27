@@ -35,6 +35,6 @@ ExternalProject_Add(mupdf
   URL ${CMAKE_CURRENT_SOURCE_DIR}/mupdf
   CONFIGURE_COMMAND /bin/true
   BUILD_IN_SOURCE 1
-  BUILD_COMMAND PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/pkgconfig LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/:${CMAKE_BINARY_DIR}/fakelibs verbose=yes make release XCFLAGS=-I${CMAKE_BINARY_DIR}/deps/usr/include/\ -Iinclude/mupdf\ -I${CMAKE_SOURCE_DIR}/fakelibs XLIBS=-L${CMAKE_BINARY_DIR}/fakelibs\ -lX11
+  BUILD_COMMAND PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/pkgconfig LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/deps/usr/lib/:${CMAKE_BINARY_DIR}/fakelibs verbose=yes make release XCFLAGS=-I${CMAKE_BINARY_DIR}/deps/usr/include/\ -Iinclude/mupdf\ -I${CMAKE_SOURCE_DIR}/fakelibs\ -fPIC XLIBS=-L${CMAKE_BINARY_DIR}/fakelibs\ -lX11
   INSTALL_COMMAND make build=release install prefix=/usr DESTDIR=${CMAKE_BINARY_DIR}/deps/
   )
