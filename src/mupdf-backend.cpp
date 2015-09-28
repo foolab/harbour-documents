@@ -145,10 +145,14 @@ bool MupdfBackend::load(const QString& filePath) {
 
   fz_register_document_handlers(m_ctx);
 
-  m_doc = fz_open_document(m_ctx, filePath.toUtf8());
-  if (!m_doc) {
+  fz_try(m_ctx) {
+    m_doc = fz_open_document(m_ctx, filePath.toUtf8());
+  }
+
+  fz_catch(m_ctx) {
     fz_drop_context(m_ctx);
     m_ctx = 0;
+    return false;
   }
 
   return true;
