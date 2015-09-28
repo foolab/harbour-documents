@@ -53,7 +53,7 @@ private slots:
 private:
   void clearPages();
   void clearDocument();
-
+  void stopLoader();
   void init();
 
   DocumentLoader *m_loader;

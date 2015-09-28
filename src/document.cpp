@@ -51,15 +51,7 @@ void Document::clearPages() {
 }
 
 void Document::clearDocument() {
-  if (m_loader) {
-    QObject::disconnect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
-    QObject::disconnect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
-    QObject::disconnect(m_loader, SIGNAL(locked()), this, SLOT(loaderLocked()));
-    m_loader->stop();
-    m_loader->wait();
-    m_loader->deleteLater();
-    m_loader = 0;
-  }
+  stopLoader();
 
   delete m_doc;
   m_doc = 0;
@@ -162,4 +154,16 @@ void Document::loaderLocked() {
 void Document::unlockDocument(const QString& pass) {
   setState(Document::Loading);
   m_loader->unlockDocument(pass);
+}
+
+void Document::stopLoader() {
+  if (m_loader) {
+    QObject::disconnect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
+    QObject::disconnect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
+    QObject::disconnect(m_loader, SIGNAL(locked()), this, SLOT(loaderLocked()));
+    m_loader->stop();
+    m_loader->wait();
+    m_loader->deleteLater();
+    m_loader = 0;
+  }
 }
