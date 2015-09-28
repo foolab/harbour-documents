@@ -95,6 +95,8 @@ void Document::init() {
   setHeight(height);
 
   setState(Document::Loaded);
+
+  stopLoader();
 }
 
 QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
@@ -140,7 +142,7 @@ void Document::zoomChanged() {
 
 void Document::loaderError() {
   setState(Document::Error);
-  clearDocument();
+  stopLoader();
 }
 
 void Document::loaderDone() {
