@@ -1,7 +1,7 @@
 #ifndef DOCUMENT_VIEW_H
 #define DOCUMENT_VIEW_H
 
-#include <QQuickPaintedItem>
+#include <QQuickItem>
 #include <QTimer>
 #include <QThread>
 #include "tile-cache.h"
@@ -9,7 +9,7 @@
 class Document;
 class DocumentPage;
 
-class DocumentView : public QQuickPaintedItem {
+class DocumentView : public QQuickItem {
   Q_OBJECT
   Q_PROPERTY(Document *document READ document WRITE setDocument NOTIFY documentChanged);
   Q_PROPERTY(qreal contentX READ contentX WRITE setContentX NOTIFY contentXChanged);
@@ -37,10 +37,9 @@ public:
   qreal dpiX() const;
   qreal dpiY() const;
 
-  void paint(QPainter *painter);
-
 protected:
   void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
+  QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *updatePaintNodeData);
 
 signals:
   void documentChanged();

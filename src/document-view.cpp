@@ -1,7 +1,9 @@
 #include "document-view.h"
-#include <QPainter>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QSGNode>
+#include <QSGSimpleTextureNode>
+#include <QQuickWindow>
 #include <QDebug>
 #include "document.h"
 #include "document-page.h"
@@ -9,8 +11,16 @@
 #define UPDATE_DELAY 1
 #define EXTRA_TILES  2
 
+class SimpleTextureNode : public QSGSimpleTextureNode {
+public:
+  ~SimpleTextureNode() {
+    QSGTexture *t = texture();
+    delete t;
+  }
+};
+
 DocumentView::DocumentView(QQuickItem *parent) :
-  QQuickPaintedItem(parent),
+  QQuickItem(parent),
   m_doc(0),
   m_cache(0),
   m_x(0),
@@ -23,7 +33,7 @@ DocumentView::DocumentView(QQuickItem *parent) :
 
   //  qDebug() << "DPI: x=" << m_dpiX << " y=" << m_dpiY;
 
-  setRenderTarget(QQuickPaintedItem::FramebufferObject);
+  setFlag(ItemHasContents, true);
 
   m_timer.setInterval(UPDATE_DELAY);
   m_timer.setSingleShot(true);
@@ -124,34 +134,44 @@ void DocumentView::init() {
   m_timer.start();
 }
 
-void DocumentView::paint(QPainter *painter) {
-  //  qDebug() << "Dimensions:" << width() << height();
-  //  qDebug() << "Position:" << m_x << m_y;
-
-  if (m_tiles.isEmpty()) {
-    return;
-  }
-
-  qreal w = width();
-
-  foreach (const Tile& tile, m_tiles) {
-    QRectF rect = tileRect(tile);
-    if (tile.visible) {
-      painter->drawImage(rect, tile.image);
-    } else {
-      //      qDebug() << "Skip tile painting";
-    }
-  }
-}
-
 void DocumentView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) {
-  QQuickPaintedItem::geometryChanged(newGeometry, oldGeometry);
+  QQuickItem::geometryChanged(newGeometry, oldGeometry);
 
   if (newGeometry.size() != oldGeometry.size()) {
     m_timer.start();
   }
 
   resetZoom();
+}
+
+QSGNode *DocumentView::updatePaintNode(QSGNode *oldNode,
+				       UpdatePaintNodeData *updatePaintNodeData) {
+
+  if (oldNode) {
+    delete oldNode;
+    oldNode = 0;
+  }
+
+  if (m_tiles.isEmpty()) {
+    return oldNode;
+  }
+
+  oldNode = new QSGNode;
+
+  foreach (const Tile& tile, m_tiles) {
+    QRectF rect = tileRect(tile);
+    if (tile.visible) {
+      QSGSimpleTextureNode *node = new SimpleTextureNode;
+      node->setFlag(QSGNode::OwnedByParent, true);
+      node->setTexture(window()->createTextureFromImage(tile.image));
+      node->setRect(rect);
+      node->setFiltering(QSGTexture::Nearest);
+      //      node->setOwnsTexture(true); // TODO: Qt 5.4
+      oldNode->appendChildNode(node);
+    }
+  }
+
+  return oldNode;
 }
 
 void DocumentView::refreshTiles() {
