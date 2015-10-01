@@ -51,6 +51,7 @@ signals:
 private slots:
   void refreshTiles();
   void tileAvailable(const Tile& tile, qint64 cookie);
+  void tileRequestDone(qint64 cookie);
   void init();
 
 private:

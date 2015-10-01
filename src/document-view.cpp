@@ -243,6 +243,12 @@ void DocumentView::tileAvailable(const Tile& tile, qint64 cookie) {
   }
 }
 
+void DocumentView::tileRequestDone(qint64 cookie) {
+  Q_UNUSED(cookie);
+
+  // qDebug() << Q_FUNC_INFO << cookie;
+}
+
 void DocumentView::deleteCache() {
   //  qDebug() << Q_FUNC_INFO << m_cache;
 
@@ -264,6 +270,8 @@ void DocumentView::createCache() {
   m_cache = new TileCache(dpiX(), dpiY(), this);
   QObject::connect(m_cache, SIGNAL(tileAvailable(const Tile&, qint64)),
 		   this, SLOT(tileAvailable(const Tile&, qint64)));
+  QObject::connect(m_cache, SIGNAL(requestDone(qint64)),
+		   this, SLOT(tileRequestDone(qint64)));
   m_cache->start();
 }
 
