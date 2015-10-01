@@ -2,31 +2,22 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QSGNode>
-#include <QSGSimpleTextureNode>
-#include <QQuickWindow>
 #include <QDebug>
 #include "document.h"
 #include "document-page.h"
+#include "renderers.h"
 
 #define UPDATE_DELAY 1
 #define EXTRA_TILES  2
 
-class SimpleTextureNode : public QSGSimpleTextureNode {
-public:
-  ~SimpleTextureNode() {
-    QSGTexture *t = texture();
-    delete t;
-  }
-};
-
 DocumentView::DocumentView(QQuickItem *parent) :
   QQuickItem(parent),
+  m_renderer(new Renderer(this)),
   m_doc(0),
   m_cache(0),
   m_x(0),
   m_y(0),
-  m_zoom(0.0f),
-  m_cookie(0) {
+  m_zoom(0.0f) {
 
   m_dpiX = QGuiApplication::primaryScreen()->physicalDotsPerInchX();
   m_dpiY = QGuiApplication::primaryScreen()->physicalDotsPerInchY();
@@ -44,7 +35,8 @@ DocumentView::DocumentView(QQuickItem *parent) :
 DocumentView::~DocumentView() {
   m_doc = 0;
   deleteCache();
-  m_tiles.clear();
+  delete m_renderer;
+  m_renderer = 0;
 }
 
 Document *DocumentView::document() const {
@@ -130,7 +122,7 @@ void DocumentView::init() {
     createCache();
   }
 
-  m_tiles.clear();
+  m_renderer->clearTiles();
   m_timer.start();
 }
 
@@ -152,29 +144,8 @@ QSGNode *DocumentView::updatePaintNode(QSGNode *oldNode,
     oldNode = 0;
   }
 
-  if (m_tiles.isEmpty()) {
-    return oldNode;
-  }
-
-  QSGClipNode *clip = new QSGClipNode;
-  clip->setIsRectangular(true);
-  clip->setClipRect(QRectF(0, 0, width(), height()));
-  oldNode = clip;
-
-  foreach (const Tile& tile, m_tiles) {
-    if (tile.visible) {
-      QRectF rect = tileRect(tile);
-      QSGSimpleTextureNode *node = new SimpleTextureNode;
-      node->setFlag(QSGNode::OwnedByParent, true);
-      node->setTexture(window()->createTextureFromImage(tile.image));
-      node->setRect(rect);
-      node->setFiltering(QSGTexture::Nearest);
-      //      node->setOwnsTexture(true); // TODO: Qt 5.4
-      oldNode->appendChildNode(node);
-    }
-  }
-
-  return oldNode;
+  QRectF rect(0, 0, width(), height());
+  return m_renderer->paintNode(rect);
 }
 
 void DocumentView::refreshTiles() {
@@ -221,17 +192,18 @@ void DocumentView::refreshTiles() {
     }
   }
 
-  ++m_cookie;
-  m_tiles = m_cache->requestTiles(tiles, m_cookie);
-  if (!m_tiles.isEmpty()) {
+  qint64 cookie = m_renderer->cookie();
+  ++cookie;
+  tiles = m_cache->requestTiles(tiles, cookie);
+  m_renderer->setTiles(cookie, tiles);
+
+  if (!tiles.isEmpty()) {
     update();
   }
 }
 
 void DocumentView::tileAvailable(const Tile& tile, qint64 cookie) {
-  if (cookie == m_cookie) {
-    m_tiles << tile;
-
+  if (m_renderer->addTile(cookie, tile)) {
     if (tile.visible) {
       //      qDebug() << "calling update";
       update();

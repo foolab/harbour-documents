@@ -3,11 +3,11 @@
 
 #include <QQuickItem>
 #include <QTimer>
-#include <QThread>
 #include "tile-cache.h"
 
 class Document;
 class DocumentPage;
+class Renderer;
 
 class DocumentView : public QQuickItem {
   Q_OBJECT
@@ -37,6 +37,8 @@ public:
   qreal dpiX() const;
   qreal dpiY() const;
 
+  QRectF tileRect(const Tile& tile);
+
 protected:
   void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry);
   QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *updatePaintNodeData);
@@ -57,10 +59,10 @@ private slots:
 private:
   void deleteCache();
   void createCache();
-  QRectF tileRect(const Tile& tile);
   QList<QRectF> pageRectangles(DocumentPage *page);
   void resetZoom();
 
+  Renderer *m_renderer;
   Document *m_doc;
   TileCache *m_cache;
   qreal m_x;
@@ -69,8 +71,6 @@ private:
   qreal m_dpiX;
   qreal m_dpiY;
   QTimer m_timer;
-  qint64 m_cookie;
-  QList<Tile> m_tiles;
 };
 
 #endif /* DOCUMENT_VIEW_H */
