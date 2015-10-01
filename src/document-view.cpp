@@ -156,7 +156,10 @@ QSGNode *DocumentView::updatePaintNode(QSGNode *oldNode,
     return oldNode;
   }
 
-  oldNode = new QSGNode;
+  QSGClipNode *clip = new QSGClipNode;
+  clip->setIsRectangular(true);
+  clip->setClipRect(QRectF(0, 0, width(), height()));
+  oldNode = clip;
 
   foreach (const Tile& tile, m_tiles) {
     if (tile.visible) {
@@ -167,17 +170,7 @@ QSGNode *DocumentView::updatePaintNode(QSGNode *oldNode,
       node->setRect(rect);
       node->setFiltering(QSGTexture::Nearest);
       //      node->setOwnsTexture(true); // TODO: Qt 5.4
-
-      if (rect.bottom() > height()) {
-	QRectF clip(rect.adjusted(0, 0, 0, height() - rect.bottom()));
-	QSGClipNode *clipNode = new QSGClipNode;
-	clipNode->setIsRectangular(true);
-	clipNode->setClipRect(clip);
-	clipNode->appendChildNode(node);
-	oldNode->appendChildNode(clipNode);
-      } else {
-	oldNode->appendChildNode(node);
-      }
+      oldNode->appendChildNode(node);
     }
   }
 
