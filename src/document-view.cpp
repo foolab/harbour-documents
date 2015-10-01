@@ -159,15 +159,25 @@ QSGNode *DocumentView::updatePaintNode(QSGNode *oldNode,
   oldNode = new QSGNode;
 
   foreach (const Tile& tile, m_tiles) {
-    QRectF rect = tileRect(tile);
     if (tile.visible) {
+      QRectF rect = tileRect(tile);
       QSGSimpleTextureNode *node = new SimpleTextureNode;
       node->setFlag(QSGNode::OwnedByParent, true);
       node->setTexture(window()->createTextureFromImage(tile.image));
       node->setRect(rect);
       node->setFiltering(QSGTexture::Nearest);
       //      node->setOwnsTexture(true); // TODO: Qt 5.4
-      oldNode->appendChildNode(node);
+
+      if (rect.bottom() > height()) {
+	QRectF clip(rect.adjusted(0, 0, 0, height() - rect.bottom()));
+	QSGClipNode *clipNode = new QSGClipNode;
+	clipNode->setIsRectangular(true);
+	clipNode->setClipRect(clip);
+	clipNode->appendChildNode(node);
+	oldNode->appendChildNode(clipNode);
+      } else {
+	oldNode->appendChildNode(node);
+      }
     }
   }
 
