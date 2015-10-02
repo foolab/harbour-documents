@@ -9,6 +9,7 @@
 #include "document-view.h"
 #include "documents-browser.h"
 #include "document-settings.h"
+#include "document-view-page.h"
 #include "icon-provider.h"
 
 #define URI    "Documents"
@@ -32,6 +33,7 @@ main(int argc, char *argv[]) {
   qmlRegisterType<DocumentView>(URI, MAJOR, MINOR, "DocumentView");
   qmlRegisterType<DocumentsBrowser>(URI, MAJOR, MINOR, "DocumentsBrowser");
   qmlRegisterType<DocumentSettings>(URI, MAJOR, MINOR, "DocumentSettings");
+  qmlRegisterType<DocumentPageView>(URI, MAJOR, MINOR, "DocumentPageView");
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
 
