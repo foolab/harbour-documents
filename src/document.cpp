@@ -48,6 +48,8 @@ void Document::setFilePath(const QString& filePath) {
 void Document::clearPages() {
   qDeleteAll(m_pages);
   m_pages.clear();
+
+  emit pageCountChanged();
 }
 
 void Document::clearDocument() {
@@ -97,6 +99,8 @@ void Document::init() {
   setState(Document::Loaded);
 
   stopLoader();
+
+  emit pageCountChanged();
 }
 
 QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
@@ -132,6 +136,10 @@ void Document::setState(const Document::State& state) {
     m_state = state;
     emit stateChanged();
   }
+}
+
+int Document::pageCount() const {
+  return m_pages.size();
 }
 
 void Document::zoomChanged() {

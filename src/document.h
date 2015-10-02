@@ -12,6 +12,7 @@ class Document : public QQuickItem {
 
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
   Q_PROPERTY(State state READ state NOTIFY stateChanged);
+  Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged);
   Q_ENUMS(State);
 
 public:
@@ -35,6 +36,8 @@ public:
   State state() const;
   void setState(const State& state);
 
+  int pageCount() const;
+
   void zoomChanged();
 
 public slots:
@@ -44,6 +47,7 @@ signals:
   void aboutToReset();
   void filePathChanged();
   void stateChanged();
+  void pageCountChanged();
 
 private slots:
   void loaderError();
