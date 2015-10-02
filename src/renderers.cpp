@@ -6,14 +6,6 @@
 #include <QQuickWindow>
 #include <QDebug>
 
-class SimpleTextureNode : public QSGSimpleTextureNode {
-public:
-  ~SimpleTextureNode() {
-    QSGTexture *t = texture();
-    delete t;
-  }
-};
-
 Renderer::Renderer(DocumentView *view) :
   m_view(view),
   m_cookie(0) {

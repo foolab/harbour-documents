@@ -2,6 +2,7 @@
 #define RENDERERS_H
 
 #include <QList>
+#include <QSGSimpleTextureNode>
 
 class Tile;
 class QSGNode;
@@ -26,6 +27,14 @@ private:
   DocumentView *m_view;
   qint64 m_cookie;
   QList<Tile> m_tiles;
+};
+
+class SimpleTextureNode : public QSGSimpleTextureNode {
+public:
+  ~SimpleTextureNode() {
+    QSGTexture *t = texture();
+    delete t;
+  }
 };
 
 #endif /* RENDERERS_H */
