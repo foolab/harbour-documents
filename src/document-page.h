@@ -15,7 +15,7 @@ public:
 
   QPointF pos() const;
   QSizeF size();
-  QImage tile(qreal dpiX, qreal dpiY, QRectF& rect);
+  QImage tile(qreal dpiX, qreal dpiY, const QRectF& rect);
   int number() const;
   void reset();
 

@@ -29,7 +29,7 @@ QSizeF DocumentPage::size() {
   return size;
 }
 
-QImage DocumentPage::tile(qreal dpiX, qreal dpiY, QRectF& rect) {
+QImage DocumentPage::tile(qreal dpiX, qreal dpiY, const QRectF& rect) {
   return m_page->render(dpiX, dpiY, rect);
 }
 
