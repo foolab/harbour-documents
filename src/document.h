@@ -40,6 +40,8 @@ public:
 
   void zoomChanged();
 
+  Q_INVOKABLE qreal pagePosition(int page);
+
 public slots:
   void unlockDocument(const QString& pass);
 

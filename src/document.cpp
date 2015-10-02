@@ -123,6 +123,10 @@ QList<DocumentPage *> Document::findPages(qreal top, qreal bottom) {
   return pages;
 }
 
+qreal Document::pagePosition(int page) {
+  return m_pages.size() >= page ? m_pages[page]->pos().y() : 0;
+}
+
 DocumentPage *Document::page(int p) {
   return m_pages[p];
 }
