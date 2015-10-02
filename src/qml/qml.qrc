@@ -6,5 +6,6 @@
     <file>DocumentViewPage.qml</file>
     <file>UnlockDialog.qml</file>
     <file>AboutPage.qml</file>
+    <file>DocumentIndexPage.qml</file>
   </qresource>
 </RCC>

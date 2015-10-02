@@ -135,6 +135,12 @@ Page {
 
         IconButton {
             icon.source: "image://svg/goto.svg?"+Theme.primaryColor
+            onClicked: {
+                var page = pageStack.push(Qt.resolvedUrl("DocumentIndexPage.qml"), {doc: doc})
+                page.scrollTo.connect(function(page){
+                    flick.contentY = doc.pagePosition(page) * view.dpiY
+                })
+            }
         }
     }
 }
