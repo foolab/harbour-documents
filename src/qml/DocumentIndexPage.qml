@@ -27,30 +27,35 @@ Page {
                 page.scrollTo(modelData)
                 pageStack.pop()
             }
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: Theme.itemSizeHuge
-            height: Theme.itemSizeHuge * 2
+
+            height: Theme.itemSizeHuge
+            anchors {
+                left: parent.left
+                right: parent.right
+                margins: Theme.paddingLarge
+            }
+
             DocumentPageView {
+                id: thumbnail
                 anchors {
                     top: parent.top
                     left: parent.left
-                    right: parent.right
-                    bottom: title.top
+                    bottom: parent.bottom
                     margins: Theme.paddingSmall
                 }
-
+                width: height
                 Component.onCompleted: init(doc, modelData)
             }
 
             Label {
-                id: title
                 text: qsTr("Page %1").arg(modelData + 1)
-                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
                 anchors {
-                    left: parent.left
+                    left: thumbnail.right
+                    leftMargin: Theme.paddingLarge
                     right: parent.right
                     bottom: parent.bottom
-                    bottomMargin: Theme.paddingSmall
+                    top: parent.top
                 }
             }
         }
