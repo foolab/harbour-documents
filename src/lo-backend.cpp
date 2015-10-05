@@ -4,7 +4,7 @@
 #include <LibreOfficeKit/LibreOfficeKitInit.h>
 #include <LibreOfficeKit/LibreOfficeKit.hxx>
 
-#define LO_PATH "/home/nemo/instdir/program/"
+#define LO_PATH "/usr/share/harbour-documents/lib/libreoffice/instdir/program/"
 
 lok::Office *LoBackend::m_office = 0;
 
