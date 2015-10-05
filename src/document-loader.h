@@ -17,7 +17,7 @@ public:
 
   Backend *releaseBackend(QList<BackendPage *>& pages);
 
-  void start(const QString& fileName);
+  void start(const QString& fileName, const QString& mimeType);
   void stop();
   void unlockDocument(const QString& pass);
 
@@ -42,6 +42,7 @@ private:
   QList<BackendPage *> m_pages;
   bool m_running;
   QString m_fileName;
+  QString m_mimeType;
   QString m_pass;
 };
 

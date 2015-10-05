@@ -1,35 +1,29 @@
 #include "backend.h"
-#include <QFileInfo>
 #include <map>
 #include <list>
 
 static std::map<QString, std::map<int, std::list<std::function<Backend*(void)> > > > backends;
 
-QStringList Backend::supportedExtensions() {
-  QStringList ext;
+QStringList Backend::supportedMimeTypes() {
+  QStringList types;
 
   std::map<QString, std::map<int, std::list<std::function<Backend*(void)> > > >::const_iterator iter;
   for (iter = backends.cbegin(); iter != backends.cend(); iter++) {
-    if (ext.indexOf(iter->first) == -1) {
-      ext << iter->first;
+    if (types.indexOf(iter->first) == -1) {
+      types << iter->first;
     }
   }
 
-  return ext;
+  return types;
 }
 
-Backend *Backend::create(const QString& filePath) {
-  QString ext(QFileInfo(filePath).suffix().toLower());
-  if (ext.isEmpty()) {
+Backend *Backend::create(const QString& filePath, const QString& mimeType) {
+  if (mimeType.isEmpty()) {
     return 0;
   }
 
-  if (!ext.startsWith('.')){
-    ext.prepend('.');
-  }
-
   std::map<QString, std::map<int, std::list<std::function<Backend*(void)> > > >::iterator iter1 =
-    backends.find(ext);
+    backends.find(mimeType);
   if (iter1 == backends.end()) {
     return 0;
   }
@@ -57,7 +51,7 @@ int Backend::registerBackend(const QList<BackendInfo>& info,
 			     const std::function<Backend *(void)>& func) {
 
   foreach (const BackendInfo& i, info) {
-    backends[i.m_ext][i.m_score].push_back(func);
+    backends[i.m_mime][i.m_score].push_back(func);
   }
 
   return 0;

@@ -17,9 +17,10 @@ Backend *DocumentLoader::releaseBackend(QList<BackendPage *>& pages) {
   return doc;
 }
 
-void DocumentLoader::start(const QString& fileName) {
+void DocumentLoader::start(const QString& fileName, const QString& mimeType) {
   m_running = true;
   m_fileName = fileName;
+  m_mimeType = mimeType;
   QThread::start();
 }
 
@@ -32,7 +33,7 @@ void DocumentLoader::stop() {
 void DocumentLoader::run() {
   m_lock.lock();
 
-  m_doc = Backend::create(m_fileName);
+  m_doc = Backend::create(m_fileName, m_mimeType);
 
   if (!m_doc) {
     QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection);

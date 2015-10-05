@@ -10,7 +10,8 @@ class DocumentLoader;
 class Document : public QQuickItem {
   Q_OBJECT
 
-  Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged);
+  Q_PROPERTY(QString filePath READ filePath NOTIFY filePathChanged);
+  Q_PROPERTY(QString mimeType READ mimeType NOTIFY mimeTypeChanged);
   Q_PROPERTY(State state READ state NOTIFY stateChanged);
   Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged);
   Q_ENUMS(State);
@@ -28,7 +29,7 @@ public:
   ~Document();
 
   QString filePath() const;
-  void setFilePath(const QString& filePath);
+  QString mimeType() const;
 
   QList<DocumentPage *> findPages(qreal top, qreal bottom);
   DocumentPage *page(int p);
@@ -44,10 +45,12 @@ public:
 
 public slots:
   void unlockDocument(const QString& pass);
+  void init(const QString& filePath, const QString& mimeType);
 
 signals:
   void aboutToReset();
   void filePathChanged();
+  void mimeTypeChanged();
   void stateChanged();
   void pageCountChanged();
 
@@ -67,6 +70,7 @@ private:
   State m_state;
   Backend *m_doc;
   QString m_filePath;
+  QString m_mimeType;
 };
 
 #endif /* DOCUMENT_H */

@@ -25,24 +25,31 @@ QString Document::filePath() const {
   return m_filePath;
 }
 
-void Document::setFilePath(const QString& filePath) {
-  if (m_filePath != filePath) {
-    m_filePath = filePath;
+QString Document::mimeType() const {
+  return m_mimeType;
+}
 
-    emit filePathChanged();
+void Document::init(const QString& filePath, const QString& mimeType) {
+  m_filePath = filePath;
+  emit filePathChanged();
 
-    setState(Document::Loading);
+  m_mimeType = mimeType;
+  emit mimeTypeChanged();
 
+  setState(Document::Loading);
+
+  if (!m_pages.isEmpty()) {
     emit aboutToReset();
     clearPages();
-    clearDocument();
-
-    m_loader = new DocumentLoader;
-    QObject::connect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
-    QObject::connect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
-    QObject::connect(m_loader, SIGNAL(locked()), this, SLOT(loaderLocked()));
-    m_loader->start(m_filePath);
   }
+
+  clearDocument();
+
+  m_loader = new DocumentLoader;
+  QObject::connect(m_loader, SIGNAL(done()), this, SLOT(loaderDone()));
+  QObject::connect(m_loader, SIGNAL(error()), this, SLOT(loaderError()));
+  QObject::connect(m_loader, SIGNAL(locked()), this, SLOT(loaderLocked()));
+  m_loader->start(m_filePath, m_mimeType);
 }
 
 void Document::clearPages() {

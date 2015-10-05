@@ -63,4 +63,4 @@ bool PopplerBackend::unlock(const QString& password) {
   return m_doc->unlock(QByteArray(), password.toLatin1());
 }
 
-ADD_BACKEND(QList<BackendInfo>() << BackendInfo(".pdf", "application/pdf", 1), PopplerBackend);
+ADD_BACKEND(QList<BackendInfo>() << BackendInfo("application/pdf", 1), PopplerBackend);

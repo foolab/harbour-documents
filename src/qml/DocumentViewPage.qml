@@ -3,10 +3,13 @@ import Sailfish.Silica 1.0
 import Documents 1.0
 
 Page {
+    id: page
+
     allowedOrientations: Orientation.All
     showNavigationIndicator: doc.state != Document.Loaded
 
-    property alias filePath: doc.filePath
+    property string filePath
+    property string mimeType
 
     DocumentSettings {
         id: docSettings
@@ -48,6 +51,8 @@ Page {
 
         Document {
             id: doc
+            Component.onCompleted: init(page.filePath, page.mimeType)
+
             onStateChanged: {
                 if (doc.state == Document.Loaded) {
                     docSettings.load(doc.filePath)

@@ -23,6 +23,7 @@ BuildRequires:  yasm
 %endif
 Requires:  sailfishsilica-qt5
 Requires:  mapplauncherd-booster-silica-qt5
+Requires:  nemo-qml-plugin-configuration
 
 %description
  A document viewer for Sailfish OS

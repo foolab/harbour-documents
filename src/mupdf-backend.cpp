@@ -167,6 +167,6 @@ bool MupdfBackend::unlock(const QString& password) {
 }
 
 ADD_BACKEND(QList<BackendInfo>()
-	    << BackendInfo(".pdf", "application/pdf", 100)
-	    << BackendInfo(".epub", "application/epub+zip", 1),
+	    << BackendInfo("application/pdf", 100)
+	    << BackendInfo("application/epub+zip", 1),
 	    MupdfBackend);

@@ -107,5 +107,5 @@ bool LoBackend::unlock(const QString& password) {
 }
 
 ADD_BACKEND(QList<BackendInfo>()
-	    << BackendInfo(".doc", "application/msword", 100),
+	    << BackendInfo("application/msword", 100),
 	    LoBackend);

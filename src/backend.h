@@ -11,13 +11,11 @@ class Backend;
 
 class BackendInfo {
 public:
-BackendInfo(const QString& ext, const QString& mime, int score) :
-  m_ext(ext),
+BackendInfo(const QString& mime, int score) :
   m_mime(mime),
   m_score(score) {
   }
 
-  QString m_ext;
   QString m_mime;
   int m_score;
 };
@@ -39,7 +37,7 @@ protected:
 
 class Backend {
 public:
-  static Backend *create(const QString& filePath);
+  static Backend *create(const QString& filePath, const QString& mimeType);
 
   virtual ~Backend() {}
 
@@ -52,7 +50,7 @@ public:
   // This must return int or g++ will barf :/
   static int registerBackend(const QList<BackendInfo>& info,
 			     const std::function<Backend *(void)>& func);
-  static QStringList supportedExtensions();
+  static QStringList supportedMimeTypes();
 
 protected:
   Backend() {}
