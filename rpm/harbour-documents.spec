@@ -1,5 +1,5 @@
 %define __provides_exclude_from ^%{_datadir}/.*$
-%define __requires_exclude ^libjbig2dec.so.0|libjpeg.so.62|libopenjp2.so.7|libpoppler-qt5.so.1|libpoppler.so.54|libtiff.so.5|$
+%define __requires_exclude ^libjbig2dec.so.0|libjpeg.so.62|libopenjp2.so.7|libpoppler-qt5.so.1|libpoppler.so.54|libtiff.so.5|libfreetype.so.6$
 
 Name:       harbour-documents
 Summary:    Document viewer application for Sailfish OS
