@@ -60,10 +60,15 @@ QSGNode *Renderer::paintNode(const QRectF& viewport) const {
       node->setFiltering(QSGTexture::Nearest);
       //      node->setOwnsTexture(true); // TODO: Qt 5.4
 
-      if (rect.bottom() > viewport.bottom()) {
+      qreal dx1 = 0.0f;
+      qreal dy1 = 0.0f;
+      qreal dx2 = rect.right() > viewport.right() ? viewport.right() - rect.right() : 0.0f;
+      qreal dy2 = rect.bottom() > viewport.bottom() ? viewport.bottom() - rect.bottom() : 0.0f;
+
+      if (dx2 != 0 || dy2 != 0) {
 	QSGClipNode *clip = new QSGClipNode;
 	clip->setIsRectangular(true);
-	clip->setClipRect(rect.adjusted(0, 0, 0, viewport.bottom() - rect.bottom()));
+	clip->setClipRect(rect.adjusted(dx1, dy1, dx2, dy2));
 	parentNode->appendChildNode(clip);
 	clip->appendChildNode(node);
 	//	qDebug() << "Clipping";
