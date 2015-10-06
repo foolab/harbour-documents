@@ -25,7 +25,8 @@ Page {
         id: view
         anchors.fill: parent
         model: browser.model
-
+        add: Transition { AddAnimation {} }
+        remove: Transition { RemoveAnimation {} }
         header: PageHeader {
             title: qsTr("Documents")
         }
