@@ -10,11 +10,13 @@ Page {
     allowedOrientations: Orientation.All
 
     SilicaListView {
+        clip: true
+
         anchors {
             top: parent.top
             left: parent.left
             right: parent.right
-            bottom: parent.bottom // TODO:
+            bottom: row.top
         }
 
         header: PageHeader {
@@ -61,4 +63,41 @@ Page {
         }
     }
 
+    Row {
+        id: row
+        height: Theme.itemSizeLarge
+        spacing: Theme.paddingLarge
+
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        function jump() {
+            page.scrollTo(field.text - 1)
+            pageStack.pop()
+        }
+
+        TextField {
+            id: field
+            width: Theme.itemSizeHuge * 3
+            inputMethodHints: Qt.ImhDigitsOnly
+            placeholderText: qsTr("Enter page number")
+            validator: IntValidator {
+                bottom: 1
+                top: doc.pageCount
+            }
+
+            EnterKey.onClicked: row.jump()
+        }
+
+        Label {
+            text: qsTr("/ %1").arg(doc.pageCount)
+        }
+
+        Button {
+            text: qsTr("Go")
+            onClicked: row.jump()
+        }
+    }
 }
