@@ -31,9 +31,21 @@ Page {
         }
 
         PullDownMenu {
+            id: menu
+            // We delay invoking refreshDocuments() until the menu is closed
+            // because it seems that clearing the list view breaks the menu animation
+            property bool __refresh
+
+            onActiveChanged: {
+                if (__refresh) {
+                    refreshDocuments()
+                    __refresh = false
+                }
+            }
+
             MenuItem { text: qsTr("About"); onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml")) }
             MenuItem { text: qsTr("Settings"); onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml")) }
-            MenuItem { text: qsTr("Refresh"); onClicked: refreshDocuments() }
+            MenuItem { text: qsTr("Refresh"); onClicked: menu.__refresh = true }
         }
 
         ViewPlaceholder {
