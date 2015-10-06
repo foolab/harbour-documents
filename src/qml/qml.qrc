@@ -7,5 +7,7 @@
     <file>UnlockDialog.qml</file>
     <file>AboutPage.qml</file>
     <file>DocumentIndexPage.qml</file>
+    <file>SettingsPage.qml</file>
+    <file>ConfigSwitch.qml</file>
   </qresource>
 </RCC>
