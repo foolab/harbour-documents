@@ -30,6 +30,7 @@ Requires:  nemo-qml-plugin-configuration-qt5
 
 %prep
 %setup -q
+rm -rf external/mupdf/thirdparty
 
 %build
 cmake .
