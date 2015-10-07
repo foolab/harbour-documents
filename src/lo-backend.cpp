@@ -107,5 +107,10 @@ bool LoBackend::unlock(const QString& password) {
 }
 
 ADD_BACKEND(QList<BackendInfo>()
-	    << BackendInfo("application/msword", 100),
+	    << BackendInfo("application/msword", 100)
+	    << BackendInfo("application/vnd.ms-excel", 100)
+	    << BackendInfo("application/vnd.ms-powerpoint", 100)
+	    << BackendInfo("application/vnd.openxmlformats-officedocument.wordprocessingml.document", 100)
+	    << BackendInfo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 100)
+	    << BackendInfo("application/vnd.openxmlformats-officedocument.presentationml.presentation", 100),
 	    LoBackend);
