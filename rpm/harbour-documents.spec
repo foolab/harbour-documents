@@ -47,6 +47,8 @@ cp -a fakelibs/libGL.so.1 fakelibs/libX11.so.6 %{buildroot}/%{_datadir}/harbour-
 mkdir -p %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/
 cp -a /usr/lib/libreoffice/instdir %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/
 
+chmod 644 %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/resource/*.res
+
 # We don't want those
 rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/regmerge
 rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/oosplash
