@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Documents
+Name=Document viewer
 Icon=harbour-documents
 Exec=harbour-documents
 X-Nemo-Application-Type=silica-qt5
