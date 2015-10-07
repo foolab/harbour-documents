@@ -47,6 +47,38 @@ cp -a fakelibs/libGL.so.1 fakelibs/libX11.so.6 %{buildroot}/%{_datadir}/harbour-
 mkdir -p %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/
 cp -a /usr/lib/libreoffice/instdir %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/
 
+# We don't want those
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/regmerge
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/oosplash
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/uri-encode
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/soffice.bin
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/regview
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/uno.bin
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/gengal.bin
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/unopkg.bin
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/sdk/bin/idlc
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/sdk/bin/javamaker
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/sdk/bin/cppumaker
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/sdk/bin/ucpp
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/CREDITS.fodt
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/LICENSE*
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/NOTICE
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/help
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/presets
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/sdk
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/gengal
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/sbase
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/scalc
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/sdraw
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/senddoc
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/simpress
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/smath
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/soffice
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/swriter
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/uno
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/unoinfo
+rm -rf %{buildroot}/%{_datadir}/harbour-documents/lib/libreoffice/instdir/program/unopkg
+
 desktop-file-install --delete-original                   \
   --dir %{buildroot}%{_datadir}/applications             \
    %{buildroot}%{_datadir}/applications/*.desktop
