@@ -47,6 +47,7 @@ add_executable(harbour-documents
   document-settings.cpp
   renderers.cpp
   document-view-page.cpp
+  helper.cpp
   )
 
 add_dependencies(harbour-documents popplerbackend)

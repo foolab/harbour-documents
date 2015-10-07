@@ -11,6 +11,7 @@
 #include "document-settings.h"
 #include "document-view-page.h"
 #include "icon-provider.h"
+#include "helper.h"
 
 #define URI    "Documents"
 #define MAJOR  1
@@ -34,6 +35,7 @@ main(int argc, char *argv[]) {
   qmlRegisterType<DocumentsBrowser>(URI, MAJOR, MINOR, "DocumentsBrowser");
   qmlRegisterType<DocumentSettings>(URI, MAJOR, MINOR, "DocumentSettings");
   qmlRegisterType<DocumentPageView>(URI, MAJOR, MINOR, "DocumentPageView");
+  qmlRegisterSingletonType<Helper>(URI, MAJOR, MINOR, "Helper", helper_singletontype_provider);
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
 
