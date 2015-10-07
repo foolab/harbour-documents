@@ -136,6 +136,7 @@ Page {
 
         IconButton {
             icon.source: "image://svg/info.svg?"+Theme.primaryColor
+            onClicked: pageStack.push(Qt.resolvedUrl("DocumentDetailsPage.qml"), {doc: doc})
         }
 
         IconButton {
