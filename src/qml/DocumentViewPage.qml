@@ -49,6 +49,10 @@ Page {
         contentHeight: doc.height * view.dpiY
         boundsBehavior: Flickable.StopAtBounds
 
+        function scrollToPageAndPop(page) {
+            pageStack.pop()
+            contentY = doc.pagePosition(page) * view.dpiY
+        }
         Document {
             id: doc
             Component.onCompleted: init(page.filePath, page.mimeType)
@@ -143,9 +147,7 @@ Page {
             icon.source: "image://svg/pages.svg"
             onClicked: {
                 var page = pageStack.push(Qt.resolvedUrl("DocumentIndexPage.qml"), {doc: doc})
-                page.scrollTo.connect(function(page){
-                    flick.contentY = doc.pagePosition(page) * view.dpiY
-                })
+                page.scrollTo.connect(flick.scrollToPageAndPop)
             }
         }
     }

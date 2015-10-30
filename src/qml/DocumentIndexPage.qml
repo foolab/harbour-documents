@@ -25,10 +25,7 @@ Page {
 
         model: doc.pageCount
         delegate: BackgroundItem {
-            onClicked: {
-                page.scrollTo(modelData)
-                pageStack.pop()
-            }
+            onClicked: page.scrollTo(modelData)
 
             height: Theme.itemSizeHuge
             anchors {
