@@ -53,6 +53,18 @@ Page {
             pageStack.pop()
             contentY = doc.pagePosition(page) * view.dpiY
         }
+
+        readonly property int maxPosition: contentHeight - height
+
+        function pagePrev() {
+            var newY = flick.contentY - height
+            contentY = newY > 0 ? newY : 0
+        }
+        function pageNext() {
+            var newY = flick.contentY + height
+            contentY = newY > maxPosition ? maxPosition : newY
+        }
+
         Document {
             id: doc
             Component.onCompleted: init(page.filePath, page.mimeType)
@@ -143,6 +155,16 @@ Page {
             onClicked: pageStack.push(Qt.resolvedUrl("DocumentDetailsPage.qml"), {doc: doc})
         }
 
+        ZoomingButton {
+            icon.source: "image://svg/page-prev.svg"
+            enabled: flick.contentY > 0
+            onClicked: flick.pagePrev()
+        }
+        ZoomingButton {
+            icon.source: "image://svg/page-next.svg"
+            enabled: flick.contentY < flick.maxPosition
+            onClicked: flick.pageNext()
+        }
         ZoomingButton {
             icon.source: "image://svg/pages.svg"
             onClicked: {
