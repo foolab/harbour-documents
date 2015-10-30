@@ -127,23 +127,23 @@ Page {
             bottom: parent.bottom
         }
 
-        height: _shown ? Theme.itemSizeSmall : 0
+        height: _shown ? Theme.itemSizeMedium + spacing * 2 : 0
 
         Behavior on height {
             NumberAnimation { duration: 200 }
         }
 
-        IconButton {
+        ZoomingButton {
             icon.source: "image://svg/books.svg"
             onClicked: pageStack.pop()
         }
 
-        IconButton {
+        ZoomingButton {
             icon.source: "image://svg/info.svg"
             onClicked: pageStack.push(Qt.resolvedUrl("DocumentDetailsPage.qml"), {doc: doc})
         }
 
-        IconButton {
+        ZoomingButton {
             icon.source: "image://svg/pages.svg"
             onClicked: {
                 var page = pageStack.push(Qt.resolvedUrl("DocumentIndexPage.qml"), {doc: doc})
