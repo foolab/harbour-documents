@@ -172,5 +172,12 @@ Page {
                 page.scrollTo.connect(flick.scrollToPageAndPop)
             }
         }
+        ZoomingButton {
+            icon.source: "image://svg/toc.svg"
+            onClicked: {
+                var page = pageStack.push(Qt.resolvedUrl("DocumentOutlinePage.qml"), {doc: doc})
+                page.scrollTo.connect(flick.scrollToPageAndPop)
+            }
+        }
     }
 }
