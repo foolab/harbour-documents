@@ -1,7 +1,11 @@
 #include "mupdf-backend.h"
 extern "C" {
 #include "mupdf/fitz.h"
+#include "mupdf/pdf.h"
 };
+#include <vector>
+#include <set>
+#include <QDebug>
 
 // TODO: we are not handling any exceptions at all
 // TODO: locking
@@ -106,6 +110,87 @@ private:
   fz_rect m_bound;
 };
 
+class MupdfBackendOutline : public BackendOutline {
+public:
+  MupdfBackendOutline(fz_context *ctx, fz_document *doc)
+    : m_ctx(ctx), m_head(fz_load_outline(ctx, doc)) {
+  }
+
+  MupdfBackendOutline(MupdfBackendOutline const&) = delete;
+  MupdfBackendOutline operator = (MupdfBackendOutline const&) = delete;
+
+  virtual ~MupdfBackendOutline() {
+    if (m_head)
+      fz_drop_outline(m_ctx, m_head);
+  }
+
+  size_t size() {
+    if (!m_head)
+      return 0;
+    lazy_init();
+    return m_items.size();
+  }
+
+  QString title(size_t idx) {
+    fz_outline *outline = item(idx).first;
+    return (outline && outline->title) ? outline->title : "";
+  }
+
+  int page(size_t idx) {
+    fz_outline *outline = item(idx).first;
+    return outline ? page(outline->dest) : -1;
+  }
+
+  int level(size_t idx) {
+    return item(idx).second;
+  }
+
+private:
+
+  typedef std::pair<fz_outline *, int> item_type;
+  item_type item(size_t idx) {
+    lazy_init();
+    return (idx < m_items.size()
+            ? m_items[idx]
+            : std::make_pair((fz_outline*)nullptr, -1));
+  }
+
+  void lazy_init() {
+    std::function<void (fz_outline*, int)> add;
+    std::set<fz_outline*> added;
+    add = [this, &add, &added](fz_outline *outline, unsigned level) {
+      if (!outline || added.count(outline))
+        return;
+
+      if (outline->title && outline->title[0] != '\0') {
+        m_items.push_back(std::make_pair(outline, level));
+      }
+      added.insert(outline);
+      if (outline->down) {
+        add(outline->down, level + 1);
+      }
+      for (fz_outline *cur = outline->next; cur; cur = cur->next) {
+        add(cur, level);
+      }
+    };
+    if (!m_populated) {
+      add(m_head, 0);
+      m_populated = true;
+    }
+  }
+
+  int page(fz_link_dest link) {
+    return link.kind == FZ_LINK_GOTO || link.kind == FZ_LINK_GOTOR
+      ? link.ld.gotor.page
+      : -1;
+  }
+
+  fz_context *m_ctx;
+  fz_outline *m_head;
+  bool m_populated;
+  std::vector<item_type> m_items;
+};
+
 MupdfBackend::MupdfBackend() :
   m_doc(0),
   m_ctx(0) {
@@ -164,6 +249,10 @@ bool MupdfBackend::isLocked() {
 
 bool MupdfBackend::unlock(const QString& password) {
   return fz_authenticate_password(m_ctx, m_doc, password.toLatin1().constData()) != 0;
+}
+
+BackendOutlineHandle MupdfBackend::outline() {
+  return BackendOutlineHandle(new MupdfBackendOutline(m_ctx, m_doc));
 }
 
 ADD_BACKEND(QList<BackendInfo>()
