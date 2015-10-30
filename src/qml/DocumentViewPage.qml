@@ -130,17 +130,17 @@ Page {
         }
 
         IconButton {
-            icon.source: "image://theme/icon-m-back"
+            icon.source: "image://svg/books.svg"
             onClicked: pageStack.pop()
         }
 
         IconButton {
-            icon.source: "image://svg/info.svg?"+Theme.primaryColor
+            icon.source: "image://svg/info.svg"
             onClicked: pageStack.push(Qt.resolvedUrl("DocumentDetailsPage.qml"), {doc: doc})
         }
 
         IconButton {
-            icon.source: "image://svg/goto.svg?"+Theme.primaryColor
+            icon.source: "image://svg/pages.svg"
             onClicked: {
                 var page = pageStack.push(Qt.resolvedUrl("DocumentIndexPage.qml"), {doc: doc})
                 page.scrollTo.connect(function(page){

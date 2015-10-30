@@ -1,8 +1,9 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
   <qresource prefix="/icons">
-    <file>goto.svg</file>
+    <file>pages.svg</file>
     <file>info.svg</file>
     <file>logo.svg</file>
+    <file>books.svg</file>
   </qresource>
 </RCC>
