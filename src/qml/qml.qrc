@@ -10,5 +10,6 @@
     <file>DocumentDetailsPage.qml</file>
     <file>SettingsPage.qml</file>
     <file>ConfigSwitch.qml</file>
+    <file>ZoomingButton.qml</file>
   </qresource>
 </RCC>
