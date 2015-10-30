@@ -48,6 +48,7 @@ add_executable(harbour-documents
   renderers.cpp
   document-view-page.cpp
   helper.cpp
+  outline-model.cpp
   )
 
 add_dependencies(harbour-documents popplerbackend)

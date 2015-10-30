@@ -10,6 +10,7 @@
 #include "documents-browser.h"
 #include "document-settings.h"
 #include "document-view-page.h"
+#include "outline-model.h"
 #include "icon-provider.h"
 #include "helper.h"
 
@@ -35,6 +36,7 @@ main(int argc, char *argv[]) {
   qmlRegisterType<DocumentsBrowser>(URI, MAJOR, MINOR, "DocumentsBrowser");
   qmlRegisterType<DocumentSettings>(URI, MAJOR, MINOR, "DocumentSettings");
   qmlRegisterType<DocumentPageView>(URI, MAJOR, MINOR, "DocumentPageView");
+  qmlRegisterType<OutlineModel>(URI, MAJOR, MINOR, "DocumentOutlineModel");
   qmlRegisterSingletonType<Helper>(URI, MAJOR, MINOR, "Helper", helper_singletontype_provider);
 
   view->setSource(QUrl("qrc:/qml/main.qml"));
