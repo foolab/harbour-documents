@@ -134,6 +134,10 @@ qreal Document::pagePosition(int page) {
   return m_pages.size() >= page ? m_pages[page]->pos().y() : 0;
 }
 
+BackendOutlineHandle Document::outline() {
+  return m_doc ? m_doc->outline() : BackendOutlineHandle();
+}
+
 DocumentPage *Document::page(int p) {
   return m_pages[p];
 }
