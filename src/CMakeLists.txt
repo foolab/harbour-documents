@@ -21,13 +21,22 @@ include_directories(${CMAKE_BINARY_DIR}/deps/usr/include/
   ${CMAKE_SOURCE_DIR}/external/
   ${BOOSTER_INCLUDE_DIRS})
 
-add_library(popplerbackend STATIC poppler-backend.cpp)
-qt5_use_modules(popplerbackend Gui Quick Xml)
-add_dependencies(popplerbackend poppler)
+if(ENABLE_POPPLER)
+  set(POPPLER_LINK_FLAGS -lpoppler-qt5 -lpoppler)
+  set(POPPLER_BACKEND popplerbackend)
+  add_library(popplerbackend STATIC poppler-backend.cpp)
+  qt5_use_modules(popplerbackend Gui Quick Xml)
+  if (BUILD_FOR_HARBOUR)
+    add_dependencies(popplerbackend poppler)
+  endif()
+#else()
+endif()
 
 add_library(mupdfbackend STATIC mupdf-backend.cpp)
 qt5_use_modules(mupdfbackend Gui Quick Xml)
-add_dependencies(mupdfbackend mupdf)
+if (BUILD_FOR_HARBOUR)
+  add_dependencies(mupdfbackend mupdf)
+endif()
 
 add_library(lobackend STATIC lo-backend.cpp)
 qt5_use_modules(lobackend Gui Quick Xml)
@@ -51,18 +60,20 @@ add_executable(harbour-documents
   outline-model.cpp
   )
 
-add_dependencies(harbour-documents popplerbackend)
+if(ENABLE_POPPLER)
+  add_dependencies(harbour-documents popplerbackend)
+endif()
 qt5_use_modules(harbour-documents Gui Quick Xml)
 
 target_link_libraries(harbour-documents
   -Wl,-whole-archive -L.
-  popplerbackend
+  ${POPPLER_BACKEND}
   mupdfbackend
   lobackend
   -Wl,-no-whole-archive
   ${ZLIB_LIBRARIES}
   ${PNG_LIBRARIES}
   ${BOOSTER_LDFLAGS}
- -L${CMAKE_BINARY_DIR}/deps/usr/lib/ -lpoppler-qt5 -lpoppler -lpthread -lmupdf -lopenjp2 -ljbig2dec -ljpeg -lfreetype -ldl)
+ -L${CMAKE_BINARY_DIR}/deps/usr/lib/ ${POPPLER_LINK_FLAGS} -lpthread -lmupdf -lopenjp2 -ljbig2dec -ljpeg -lfreetype -ldl)
 
 install(TARGETS harbour-documents DESTINATION "/usr/bin/")
