@@ -49,20 +49,25 @@ Page {
         contentHeight: doc.height * view.dpiY
         boundsBehavior: Flickable.StopAtBounds
 
+        function updateCurrentPosition(newY) {
+            contentY = newY
+            docSettings.position = Qt.point(contentX, contentY)
+        }
+
         function scrollToPageAndPop(page) {
             pageStack.pop()
-            contentY = doc.pagePosition(page) * view.dpiY
+            updateCurrentPosition(doc.pagePosition(page) * view.dpiY)
         }
 
         readonly property int maxPosition: contentHeight - height
 
         function pagePrev() {
             var newY = flick.contentY - height
-            contentY = newY > 0 ? newY : 0
+            updateCurrentPosition(newY > 0 ? newY : 0)
         }
         function pageNext() {
             var newY = flick.contentY + height
-            contentY = newY > maxPosition ? maxPosition : newY
+            updateCurrentPosition(newY > maxPosition ? maxPosition : newY)
         }
 
         Document {
