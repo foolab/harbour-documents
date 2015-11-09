@@ -15,6 +15,7 @@ public:
   bool load(const QString& filePath);
   bool isLocked();
   bool unlock(const QString& password);
+  BackendOutlineHandle outline() override;
 
 private:
   fz_document *m_doc;

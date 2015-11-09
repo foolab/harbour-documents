@@ -49,6 +49,27 @@ Page {
         contentHeight: doc.height * view.dpiY
         boundsBehavior: Flickable.StopAtBounds
 
+        function updateCurrentPosition(newY) {
+            contentY = newY
+            docSettings.position = Qt.point(contentX, contentY)
+        }
+
+        function scrollToPageAndPop(page) {
+            pageStack.pop()
+            updateCurrentPosition(doc.pagePosition(page) * view.dpiY)
+        }
+
+        readonly property int maxPosition: contentHeight - height
+
+        function pagePrev() {
+            var newY = flick.contentY - height
+            updateCurrentPosition(newY > 0 ? newY : 0)
+        }
+        function pageNext() {
+            var newY = flick.contentY + height
+            updateCurrentPosition(newY > maxPosition ? maxPosition : newY)
+        }
+
         Document {
             id: doc
             Component.onCompleted: init(page.filePath, page.mimeType)
@@ -123,29 +144,44 @@ Page {
             bottom: parent.bottom
         }
 
-        height: _shown ? Theme.itemSizeSmall : 0
+        height: _shown ? Theme.itemSizeMedium + spacing * 2 : 0
 
         Behavior on height {
             NumberAnimation { duration: 200 }
         }
 
-        IconButton {
-            icon.source: "image://theme/icon-m-back"
+        ZoomingButton {
+            icon.source: "image://svg/books.svg"
             onClicked: pageStack.pop()
         }
 
-        IconButton {
-            icon.source: "image://svg/info.svg?"+Theme.primaryColor
+        ZoomingButton {
+            icon.source: "image://svg/info.svg"
             onClicked: pageStack.push(Qt.resolvedUrl("DocumentDetailsPage.qml"), {doc: doc})
         }
 
-        IconButton {
-            icon.source: "image://svg/goto.svg?"+Theme.primaryColor
+        ZoomingButton {
+            icon.source: "image://svg/page-prev.svg"
+            enabled: flick.contentY > 0
+            onClicked: flick.pagePrev()
+        }
+        ZoomingButton {
+            icon.source: "image://svg/page-next.svg"
+            enabled: flick.contentY < flick.maxPosition
+            onClicked: flick.pageNext()
+        }
+        ZoomingButton {
+            icon.source: "image://svg/pages.svg"
             onClicked: {
                 var page = pageStack.push(Qt.resolvedUrl("DocumentIndexPage.qml"), {doc: doc})
-                page.scrollTo.connect(function(page){
-                    flick.contentY = doc.pagePosition(page) * view.dpiY
-                })
+                page.scrollTo.connect(flick.scrollToPageAndPop)
+            }
+        }
+        ZoomingButton {
+            icon.source: "image://svg/toc.svg"
+            onClicked: {
+                var page = pageStack.push(Qt.resolvedUrl("DocumentOutlinePage.qml"), {doc: doc})
+                page.scrollTo.connect(flick.scrollToPageAndPop)
             }
         }
     }

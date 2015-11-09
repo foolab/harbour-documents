@@ -2,10 +2,8 @@
 #define DOCUMENT_H
 
 #include <QQuickItem>
-
-class DocumentPage;
-class Backend;
-class DocumentLoader;
+#include <memory>
+#include "documents-fwd.h"
 
 class Document : public QQuickItem {
   Q_OBJECT
@@ -42,6 +40,8 @@ public:
   void zoomChanged();
 
   Q_INVOKABLE qreal pagePosition(int page);
+
+  BackendOutlineHandle outline();
 
 public slots:
   void unlockDocument(const QString& pass);

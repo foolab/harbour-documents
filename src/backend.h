@@ -6,8 +6,7 @@
 #include <QRectF>
 #include <QStringList>
 #include <functional>
-
-class Backend;
+#include "documents-fwd.h"
 
 class BackendInfo {
 public:
@@ -35,6 +34,17 @@ protected:
   BackendPage() {}
 };
 
+class BackendOutline {
+public:
+  virtual ~BackendOutline() {}
+  virtual size_t size() = 0;
+  virtual QString title(size_t) = 0;
+  virtual int page(size_t) = 0;
+  virtual int level(size_t) = 0;
+protected:
+  BackendOutline() {}
+};
+
 class Backend {
 public:
   static Backend *create(const QString& filePath, const QString& mimeType);
@@ -46,6 +56,10 @@ public:
 
   virtual bool isLocked() = 0;
   virtual bool unlock(const QString& password) = 0;
+
+  virtual BackendOutlineHandle outline() {
+    return BackendOutlineHandle(nullptr);
+  }
 
   // This must return int or g++ will barf :/
   static int registerBackend(const QList<BackendInfo>& info,
